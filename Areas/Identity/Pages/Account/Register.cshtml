@@ -1,0 +1,122 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+ 
+<div class="container-fluid py-5 animate-fade-in-up delay-1 glass-panel">
+    <spline-viewer loading-anim-type="spinner-big-dark" url="https://prod.spline.design/h2gZA2ogowIh-c7m/scene.splinecode" class="spline-body-bg"></spline-viewer>
+    <div class="row align-items-center">
+
+        <!-- Left: Content -->
+        <div class="col-md-6 text-center text-md-start px-5" style="color: white;">
+            <h1 class="text-center mb-4">
+                <img src="~/lib/lg.jpg" alt="Rider Logo" style="height: 140px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 0 8px #000000;" />
+                <span style="font-family: 'Poppins', sans-serif; font-weight: 600;">SundoGo</span>
+            </h1>
+            <div class="text-center">
+                <p>Already have an account?</p>
+                <form method="get" asp-page="/Account/Login">
+                    <button type="submit" class="w-25 btn btn-light btn-md mt-2 hover-white">Login</button>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="col-md-6 animate-fade-in">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="border p-4 shadow-sm rounded bg-white" enctype="multipart/form-data">
+                <h4 class="text-center mb-4">Create an Account</h4>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                <div class="row g-3">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="FirstName" class="form-control" placeholder="First Name" required />
+                            <label>First Name</label>
+                        </div>
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="MiddleName" class="form-control" placeholder="Middle Name (optional)" />
+                            <label>Middle Name (optional)</label>
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="LastName" class="form-control" placeholder="Last Name" required />
+                            <label>Last Name</label>
+                        </div>
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="ContactNumber" class="form-control" placeholder="0912..." required />
+                            <label>Contact Number</label>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" name="Address" class="form-control" placeholder="Address" required />
+                            <label>Address</label>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.Email" class="form-control" placeholder="Email" autocomplete="username" required />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Photo -->
+                    <div class="col-md-6">
+                        <label class="form-label">Profile Photo (optional)</label>
+                        <input type="file" name="ProfilePhoto" class="form-control" />
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="new-password" required />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="new-password" required />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button (Full width) -->
+                    <div class="col-md-12 text-center">
+                        <button id="registerSubmit" type="submit" class="btn btn-dark btn-lg mt-3 w-100 hover-dark">Sign Up</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>

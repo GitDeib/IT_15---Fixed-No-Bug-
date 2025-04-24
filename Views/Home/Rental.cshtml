@@ -1,0 +1,195 @@
+﻿
+    <style>
+        .card {
+            width: 200px;
+            flex: 0 0 auto;
+        }
+
+        .card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .vehicle-row {
+            gap: 0.5rem;
+        }
+    </style>
+
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="fw-bold" style="font-family: 'Poppins', sans-serif;">SundoGo Rentals</h1>
+            <p class="text-muted">Pick your ride like you’d pick your next comic.</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-2">
+                <input id="searchInput" type="text" class="form-control" placeholder="Search by name or keyword (e.g., sedan, family)">
+            </div>
+            <div class="col-md-3 mb-2">
+                <select id="typeFilter" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="sedan">Sedan</option>
+                    <option value="motorbike">Motorbike</option>
+                    <option value="van">Van</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Vehicle Types -->
+        <div id="vehicleTypes">
+            <!-- Category Template -->
+            <div class="vehicle-category" id="sedanCategory">
+                <h5>Sedan</h5>
+                <div class="d-flex overflow-auto vehicle-row" id="sedanRow">
+                    <!-- Vehicle Card Example -->
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-photo/white-minibus-parking-outdoor_114579-4080.jpg" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <!-- Repeat more cards as needed... -->
+                <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                    <img src="https://img.freepik.com/free-psd/silver-sedan-car_53876-84522.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                    <div class="card-body">
+                        <h5 class="card-title">Family Sedan</h5>
+                        <p class="card-text small text-muted">Comfortable for the family.</p>
+                        <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                    </div>
+                </div>
+                <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                    <img src="https://img.freepik.com/free-psd/black-isolated-car_23-2151852894.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                    <img src="https://img.freepik.com/free-photo/white-offroader-jeep-parking_114579-4007.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                    <div class="card-body">
+                        <h5 class="card-title">Family Sedan</h5>
+                        <p class="card-text small text-muted">Comfortable for the family.</p>
+                        <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                    </div>
+                </div>
+                <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                    <img src="https://img.freepik.com/free-psd/yellow-isolated-car_23-2151852890.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                    <img src="https://img.freepik.com/free-psd/vintage-car-isolated_23-2151504594.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                    <div class="card-body">
+                        <h5 class="card-title">Family Sedan</h5>
+                        <p class="card-text small text-muted">Comfortable for the family.</p>
+                        <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                    </div>
+                </div>
+                </div>
+           
+            </div>
+
+        <div id="vehicleTypes">
+            <!-- Category Template -->
+            <div class="vehicle-category" id="sedanCategory">
+                <h5>Van</h5>
+                <div class="d-flex overflow-auto vehicle-row" id="sedanRow">
+                    <!-- Vehicle Card Example -->
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-photo/white-minibus-parking-outdoor_114579-4080.jpg" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <!-- Repeat more cards as needed... -->
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-psd/silver-sedan-car_53876-84522.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-psd/black-isolated-car_23-2151852894.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-photo/white-offroader-jeep-parking_114579-4007.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-psd/yellow-isolated-car_23-2151852890.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                    <div class="card m-2" data-type="sedan" data-tags="sedan family car">
+                        <img src="https://img.freepik.com/free-psd/vintage-car-isolated_23-2151504594.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740" class="card-img-top" alt="Sedan">
+                        <div class="card-body">
+                            <h5 class="card-title">Family Sedan</h5>
+                            <p class="card-text small text-muted">Comfortable for the family.</p>
+                            <a href="/rental/book" class="btn btn-sm btn-dark w-100">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+             
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const typeFilter = document.getElementById("typeFilter");
+
+        const vehicleRows = {
+            sedan: document.getElementById("sedanRow"),
+            motorbike: document.getElementById("motorbikeRow"),
+            van: document.getElementById("vanRow")
+        };
+
+        function filterVehicles() {
+            const search = searchInput.value.toLowerCase();
+            const type = typeFilter.value;
+
+            Object.keys(vehicleRows).forEach(category => {
+                const row = vehicleRows[category];
+                const vehicles = row.querySelectorAll(".card");
+
+                vehicles.forEach(vehicle => {
+                    const tags = vehicle.getAttribute("data-tags") || '';
+                    const vType = vehicle.getAttribute("data-type");
+
+                    const matchesSearch = tags.includes(search);
+                    const matchesType = type === "" || vType === type;
+
+                    vehicle.style.display = matchesSearch && matchesType ? "block" : "none";
+                });
+            });
+        }
+
+        searchInput.addEventListener("input", filterVehicles);
+        typeFilter.addEventListener("change", filterVehicles);
+    </script>

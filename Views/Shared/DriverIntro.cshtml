@@ -1,0 +1,80 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="driverInstructionsModal" tabindex="-1" aria-labelledby="driverInstructionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="driverInstructionsModalLabel">Driver Application Instructions</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-0">
+
+                <!-- Carousel -->
+                <div id="driverInstructionsCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <!-- Slide 1: Welcome -->
+                        <div class="carousel-item active">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/car--v1.png" alt="Welcome" class="mb-3" />
+                                <h2>Welcome to SundoGo Driver Application!</h2>
+                                <p class="lead">We’re excited to have you on board. Follow the steps below to get started.</p>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: Prepare Documents -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/documents.png" alt="Documents" class="mb-3" />
+                                <h3>Step 1: Prepare Your Documents</h3>
+                                <ul class="list-unstyled text-start d-inline-block">
+                                    <li>✅ Valid Driver's License</li>
+                                    <li>✅ NBI or Police Clearance</li>
+                                    <li>✅ Valid Government ID</li>
+                                    <li>✅ Clear Profile Photo</li>
+                                    <li>✅ Vehicle Registration (Optional)</li>
+                                </ul>
+                                <p class="mt-3">Make sure you have these documents ready to proceed.</p>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3: Driving Experience -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/driving.png" alt="Experience" class="mb-3" />
+                                <h3>Step 2: Ensure You Have Driving Experience</h3>
+                                <p>You need at least <strong>6 months</strong> of driving experience to qualify.</p>
+                                <p>Click next to continue your application.</p>
+                            </div>
+                        </div>
+
+                        <!-- Slide 4: Begin Registration -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/signing-a-document.png" alt="Apply" class="mb-3" />
+                                <h3>Step 3: Complete the Application</h3>
+                                <p>Click the button below to start your driver registration form.</p>
+                                <form method="get" action="/Home/DriverReg">
+                                    <button class="btn btn-dark btn-lg mt-3 hover-dark">Get Started</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#driverInstructionsCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#driverInstructionsCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

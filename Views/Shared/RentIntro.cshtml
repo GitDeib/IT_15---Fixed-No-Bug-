@@ -1,0 +1,84 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="rentOwnerModal" tabindex="-1" aria-labelledby="rentOwnerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="rentOwnerModalLabel">Rental Partner Instructions</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-0">
+
+                <!-- Carousel -->
+                <div id="rentOwnerCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <!-- Slide 1: Welcome -->
+                        <div class="carousel-item active">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/key-exchange.png" alt="Welcome" class="mb-3" />
+                                <h2>Welcome Rental Partners!</h2>
+                                <p class="lead">Join SundoGo as a rental owner and connect your vehicles to eager riders.</p>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: Prepare Requirements -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/documents.png" alt="Documents" class="mb-3" />
+                                <h3>Step 1: Prepare the Requirements</h3>
+                                <ul class="list-unstyled text-start d-inline-block">
+                                    <li>✅ Government-Issued Valid ID</li>
+                                    <li>✅ Proof of Vehicle Ownership (OR/CR)</li>
+                                    <li>✅ Updated Vehicle Photos</li>
+                                    <li>✅ Business Permit (if applicable)</li>
+                                    <li>✅ Rental Rates & Terms Document</li>
+                                </ul>
+                                <p class="mt-3">Ensure your documents are complete and updated.</p>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3: Vehicle Condition -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/?size=100&id=10697&format=png&color=000000" alt="Vehicle Check" class="mb-3" />
+                                <h3>Step 2: Make Sure Your Vehicle is Rental-Ready</h3>
+                                <p>Your vehicle should be:</p>
+                                <ul class="list-unstyled text-start d-inline-block">
+                                    <li>✅ Clean and well-maintained</li>
+                                    <li>✅ Roadworthy and registered</li>
+                                    <li>✅ Equipped with necessary safety tools</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Slide 4: Start Application -->
+                        <div class="carousel-item">
+                            <div class="container text-center py-5">
+                                <img src="https://img.icons8.com/ios-filled/100/signing-a-document.png" alt="Register" class="mb-3" />
+                                <h3>Step 3: Begin Your Application</h3>
+                                <p>Click the button below to proceed to the rental vehicle registration form.</p>
+                                <form method="get" action="/Home/RentOwner">
+                                    <button class="btn btn-dark btn-lg mt-3 hover-dark">Register Your Vehicle</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#rentOwnerCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#rentOwnerCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.hover-whiteline:hover {
+    border-bottom: 2px solid white;
+}
+
+.hover-whiteline {
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.hover-shadow:hover {
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-dark:hover {
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    color: black;
+    border: 1px solid black;
+}
+
+.hover-dark {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-white:hover {
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+}
+
+.hover-white {
+    transition: all 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.2s;
+}
+
+.delay-2 {
+    animation-delay: 0.4s;
+}
+
+.delay-3 {
+    animation-delay: 0.6s;
+}
+
+.animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards; /* Adjust the duration (1s) as needed */
+}
+
+.glass-panel {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    padding: 2rem;
+}
+
+.spline-body-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+}

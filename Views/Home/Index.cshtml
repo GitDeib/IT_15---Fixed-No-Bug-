@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Ride & Rental - Home";
+}
+
+<!-- Hero Section -->
+
+<div class="container-fluid py-5 animate-fade-in-up delay-1 glass-panel">
+    <spline-viewer loading-anim-type="spinner-big-dark" url="https://prod.spline.design/h2gZA2ogowIh-c7m/scene.splinecode" class="spline-body-bg"></spline-viewer>
+
+    <div class="row align-items-center">
+
+        <!-- Left: Content -->
+        <div class="col-md-6 text-center text-md-start px-5" style="color: white;">
+            <h1 class="display-4 fw-bold">Your Ride, Your Way</h1>
+            <p class="lead">Fast. Affordable. Reliable. Wherever you go, we’ve got you covered.</p>
+            <button class="btn btn-light btn-lg mt-3 hover-white" data-bs-toggle="modal" data-bs-target="#chooseOptionModal">
+                Ride Now!
+            </button>
+        </div>
+
+        <!-- Right: Image -->
+        <div class="col-md-6" style="height: 400px;">
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Service-->
+<div class="modal fade" id="chooseOptionModal" tabindex="-1" aria-labelledby="chooseOptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="chooseOptionModalLabel">Choose Your Service</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="container text-center">
+                    <div class="row justify-content-center">
+                        <!-- Rent a Car -->
+                        <div class="col-md-5 mb-4 mx-2">
+                            <a href="/Home/Rental" class="text-decoration-none text-dark">
+                                <div class="p-4 border rounded shadow-sm hover-shadow">
+                                    <h4>Rent a Car</h4>
+                                    <img src="https://img.freepik.com/free-vector/driving-concept-illustration_114360-14312.jpg?t=st=1745298964~exp=1745302564~hmac=acc57cdcc4d8e46e78da129598f119ba480a1de27e0632544edde70b5db05d52&w=826" alt="Affordable Rentals" class="mb-3 img-fluid" style="max-width: 250px;" />
+                                    <p>Affordable car and motorcycle rentals anytime you need them. Flexible terms, great prices.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Book a Ride -->
+                        <div class="col-md-5 mb-4 mx-2">
+                            <a href="/Home/Ride" class="text-decoration-none text-dark">
+                                <div class="p-4 border rounded shadow-sm h-100 hover-shadow transition">
+                                    <h4>Book a Ride</h4>
+                                    <img src="https://img.freepik.com/free-vector/taxi-app-interface-illustration_23-2148487606.jpg?t=st=1745298709~exp=1745302309~hmac=341170f5b7a6c2466963a91c0a241769051a2b3dbfd160307f2c5b869116a906&w=826" alt="Instant Booking" class="mb-3 img-fluid" style="max-width: 250px;" />
+                                    <p>Get a ride in seconds with just a tap. Fast, reliable, and always nearby.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Why Choose Us Section -->
+<div class="container text-center mt-5 animate-fade-in-up delay-2">
+    <h2 class="mb-4">Why Choose Us?</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <img src="https://img.freepik.com/free-vector/24-hours-7-days-everyday-helpdesk-service-background_1017-54447.jpg?t=st=1744221221~exp=1744224821~hmac=e01bb966212236be2b0ffa5960ebfbdfc84ccd172c1be6396b6dfb922fa86d8a&w=826" alt="Fast Rides" class="mb-2" style="width: 100px;" />
+            <h5>Instant Booking</h5>
+            <p>No delays. Get a ride in seconds with just a tap.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <img src="https://img.freepik.com/free-vector/golden-cryptocurrency-coin-vector-illustration_1308-178402.jpg?t=st=1744221007~exp=1744224607~hmac=27afb8bb91aef2817bda91fd517234b0c904cddab9ae6dfdb258f6e374c5d09f&w=826" alt="Affordable Rates" class="mb-2" style="width: 100px;" />
+            <h5>Affordable Rentals</h5>
+            <p>Rent cars, and motorcycles at unbeatable prices.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <img src="https://img.freepik.com/free-vector/guard-your-privacy-with-our-defense-safety-shield-logo-design_1017-44193.jpg?t=st=1744221166~exp=1744224766~hmac=24294204a554dc9b1a7173f9633253e5705aae6db300c45f82364b5d142bbf82&w=826" alt="Safe & Secure" class="mb-2" style="width: 100px;" />
+            <h5>Safe & Secure</h5>
+            <p>Fully verified drivers and insured vehicles for your peace of mind.</p>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-10 mt-5 animate-fade-in-up delay-3 glass-panel">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+
+            <!-- Left: Background Image -->
+            <div class="col-md-6" style="height: 400px; background: url('https://wallpaperaccess.com/full/9235760.jpg') center/cover no-repeat;">
+            </div>
+
+            <!-- Right: Text Content -->
+            <div class="col-md-6 text-center text-md-start px-5" style="color: black;">
+                <h1 class="display-4 fw-bold">Be a Driver</h1>
+                <p class="lead">
+                    Drive your way, earn your way — with your own vehicle.
+                </p>
+                    <button type="button" class="btn btn-dark btn-lg hover-dark" data-bs-toggle="modal" data-bs-target="#driverInstructionsModal">
+                        Learn How to Apply as a Driver
+                    </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-10 mt-5 animate-fade-in-up delay-3 glass-panel">
+<div class="container-fluid py-5">
+    <div class="row align-items-center">
+
+        <!-- Left: Text Content -->
+        <div class="col-md-6 text-center text-md-start px-5" style="color: black;">
+                <h1 class="display-4 fw-bold">Let Your Vehicle Pay for Itself</h1>
+                <p class="lead">Got a car just sitting there? Put it to work and make money by renting it out!</p>
+                <button type="button" class="btn btn-dark btn-lg hover-dark" data-bs-toggle="modal" data-bs-target="#rentOwnerModal">
+                    Get Started!
+                </button>
+        </div>
+
+        <!-- Right: Background Image -->
+            <div class="col-md-6" style="height: 400px; background: url('https://img.freepik.com/free-photo/stylish-elegant-woman-car-salon_1157-20980.jpg?ga=GA1.1.67264026.1729824610&semt=ais_hybrid&w=740') center/cover no-repeat;">
+        </div>
+
+    </div>
+</div>
+</div>
+<div class="container text-center mt-5">
+    <h2 class="mb-4">Join Now!</h2>
+    </div>
+    <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>
