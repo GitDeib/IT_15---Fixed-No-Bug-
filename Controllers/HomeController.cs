@@ -46,6 +46,14 @@ namespace IT15_Project.Controllers
         {
             return View();
         }
+        public IActionResult Admin()
+        {
+            return View();
+        }
+        public IActionResult Users()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
