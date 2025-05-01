@@ -30,6 +30,15 @@ body {
     transition: border-color 0.3s ease-in-out;
 }
 
+.hover-darkline:hover {
+    border-bottom: 2px solid black;
+}
+
+.hover-darkline {
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease-in-out;
+}
+
 .hover-shadow:hover {
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
@@ -60,6 +69,14 @@ body {
 }
 
 .hover-white {
+    transition: all 0.2s ease-in-out;
+}
+
+.grayback:hover{
+    background-color: #e6e9f4;
+}
+
+.grayback {
     transition: all 0.2s ease-in-out;
 }
 
@@ -123,4 +140,13 @@ body {
     z-index: -1;
     pointer-events: none;
 }
+
+.bg-image {
+    background-image: url('https://images.pexels.com/photos/627678/pexels-photo-627678.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-image: fill 0 linear-gradient(#0003, #000);
+}
+
 

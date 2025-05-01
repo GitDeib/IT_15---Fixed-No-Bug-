@@ -54,6 +54,10 @@ namespace IT15_Project.Controllers
         {
             return View();
         }
+        public IActionResult PayEarn()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
