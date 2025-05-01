@@ -1,25 +1,47 @@
 ﻿<h4>Dashboard</h4>
 
 <div class="row">
-    <div class="col-md-4 mb-3">
-        <div class="card text-black bg-white glass-panel d-flex flex-column justify-content-between" style="max-height: 130px;">
+    <div class="col-12 col-md-3 mb-3">
+        <div class="card text-black bg-white glass-panel h-100 p-3 d-flex flex-column justify-content-between">
             <h5 class="card-title">Pending Drivers Application</h5>
-            <p class="fs-3">120</p>
+            <div class="d-flex align-items-center justify-content-start">
+                <img src="~/lib/GIF/document.gif" alt="KM" style="width: 50px; height: 50px;">
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">120</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card text-black bg-white glass-panel d-flex flex-column justify-content-between" style="max-height: 130px;">
-            <h5 class="card-title">Total Income</h5>
-            <p class="fs-3">₱ 560</p>
+
+    <div class="col-12 col-md-3 mb-3">
+        <div class="card text-black bg-white glass-panel h-100 p-3 d-flex flex-column justify-content-between">
+            <h5 class="card-title">Today's Income</h5>
+            <div class="d-flex align-items-center justify-content-start">
+                <img src="~/lib/GIF/profit.gif" alt="KM" style="width: 50px; height: 50px;">
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱ 560.00</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card text-black bg-white glass-panel d-flex flex-column justify-content-between" style="max-height: 130px;">
+
+    <div class="col-12 col-md-3 mb-3">
+        <div class="card text-black bg-white glass-panel h-100 p-3 d-flex flex-column justify-content-between">
+            <h5 class="card-title">Pending Payouts to Drivers</h5>
+            <div class="d-flex align-items-center justify-content-start">
+                <img src="~/lib/GIF/alms.gif" alt="KM" style="width: 50px; height: 50px;">
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">15</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-3 mb-3">
+        <div class="card text-black bg-white glass-panel h-100 p-3 d-flex flex-column justify-content-between">
             <h5 class="card-title">Available Drivers</h5>
-            <p class="fs-3">15</p>
+            <div class="d-flex align-items-center justify-content-start">
+                <img src="~/lib/GIF/driver.gif" alt="KM" style="width: 50px; height: 50px;">
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">15</p>
+            </div>
         </div>
     </div>
 </div>
+
 
 
 <div class="container-fluid mt-2">
@@ -108,6 +130,7 @@
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- Chart Script -->
 <script>
     const ctx = document.getElementById('ridesChart').getContext('2d');
@@ -122,10 +145,12 @@
         60, 61, 64, 66, 68, 69, 70, 71, 72, 74
     ]; // Replace with real data
 
-    // Bar: Today's value, placed on the last day (optional: change to Day 1 if preferred)
-    const todayIndex = new Date().getDate() - 1; // 0-based index
-    const todayRideData = Array(30).fill(null); // Empty except today's index
-    todayRideData[todayIndex] = 38; // Replace 38 with your actual today's rides
+    // Data for cancelled rides
+    const cancelledRideData = [
+        2, 4, 1, 3, 0, 5, 2, 4, 3, 1,
+        2, 3, 4, 1, 0, 2, 5, 3, 4, 2,
+        1, 2, 3, 5, 2, 4, 3, 1, 2, 3
+    ]; // Replace with real data for cancelled rides
 
     new Chart(ctx, {
         type: 'bar',
@@ -141,7 +166,15 @@
                     tension: 0.3,
                     borderWidth: 2
                 },
-                
+                {
+                    type: 'line',
+                    label: 'Cancelled Rides',
+                    data: cancelledRideData,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    borderWidth: 2
+                }
             ]
         },
         options: {

@@ -58,6 +58,10 @@ namespace IT15_Project.Controllers
         {
             return View();
         }
+        public IActionResult RateReview()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

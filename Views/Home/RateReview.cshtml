@@ -1,0 +1,118 @@
+﻿<div class="container py-5">
+    <h2 class="mb-4">Ratings & Reviews Overview</h2>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Avg. Driver Rating</h5>
+                    <p class="display-6">4.5 <i class="fas fa-star text-warning"></i></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Avg. Passenger Rating</h5>
+                    <p class="display-6">4.3 <i class="fas fa-star text-warning"></i></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reviews</h5>
+                    <p class="display-6">865</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Flagged Reviews</h5>
+                    <p class="display-6">3</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs for Drivers and Passengers -->
+    <ul class="nav nav-tabs mb-3" id="reviewTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers" type="button">Driver Reviews</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="passengers-tab" data-bs-toggle="tab" data-bs-target="#passengers" type="button">Passenger Reviews</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Driver Reviews Table -->
+        <div class="tab-pane fade show active" id="drivers" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Driver Name</th>
+                            <th>Passenger</th>
+                            <th>Rating</th>
+                            <th>Review</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Repeatable Row -->
+                        <tr>
+                            <td>1</td>
+                            <td>Juan Dela Cruz</td>
+                            <td>Maria Santos</td>
+                            <td><span class="text-warning"><i class="fas fa-star"></i> 4</span></td>
+                            <td>Very polite and on time.</td>
+                            <td>2025-04-30</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Add more rows dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Passenger Reviews Table -->
+        <div class="tab-pane fade" id="passengers" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Passenger Name</th>
+                            <th>Driver</th>
+                            <th>Rating</th>
+                            <th>Review</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Maria Santos</td>
+                            <td>Juan Dela Cruz</td>
+                            <td><span class="text-warning"><i class="fas fa-star"></i> 5</span></td>
+                            <td>Very respectful and easy to deal with.</td>
+                            <td>2025-04-29</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Add more rows dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

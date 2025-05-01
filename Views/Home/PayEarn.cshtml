@@ -27,7 +27,7 @@
 </style>
 
     <h2 class="mb-4">Admin Fare & Payout Settings</h2>
-<div class="card-header bg-info text-black">
+<div class="card-header bg-warning text-white" style="background: linear-gradient(to left, #ffffff, black);">
     <h5 class="mb-0">Car Fare</h5>
 </div>
 <div class="container my-4 glass-panel">
@@ -112,7 +112,7 @@
             </div>
 
         <div class="col-12 d-flex justify-content-end">
-            <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#updateMotorrideModal">
+            <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#updateCarFareModal">
                 Update Car Fare
             </button>
         </div>
@@ -121,7 +121,7 @@
 </div>
 
 <!-- Motorcycle -->
-<div class="card-header bg-warning text-black">
+<div class="card-header bg-warning text-white" style="background: linear-gradient(to left, #ffffff, black);">
     <h5 class="mb-0">Motorcycle Fare</h5>
 </div>
 
@@ -176,13 +176,15 @@
         </div>
 
         <div class="col-12 d-flex justify-content-end">
-            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateMotorrideModal">
+            <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#updateMotorrideModal">
                 Update Motorcycle Fare
             </button>
         </div>
     </div>
 </div>
 
+
+<!--Payout Panel-->
 <div class="card my-4 animated-border shadow-sm border-5">
     <div class="card-header bg-transparent text-black">
         <h5 class="mb-0">Driver Payout Requests</h5>
@@ -240,3 +242,99 @@
 </div>
 
 
+<!-- Car Fare Modal -->
+    <div class="modal fade" id="updateCarFareModal" tabindex="-1" aria-labelledby="carFareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="carFareModalLabel">Update Car Fare Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">4-Seater Base Fare</label>
+              <input type="number" class="form-control" placeholder="PHP 50.00">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">4-Seater Per KM</label>
+              <input type="number" class="form-control" placeholder="PHP 15.00">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">6-Seater Base Fare</label>
+              <input type="number" class="form-control" placeholder="PHP 60.00">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">6-Seater Per KM</label>
+              <input type="number" class="form-control" placeholder="PHP 18.00">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Per Minute Rate</label>
+            <input type="number" class="form-control" placeholder="PHP 2.00">
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Driver Share (%)</label>
+              <input type="number" class="form-control" placeholder="80">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Commission Rate (%)</label>
+              <input type="number" class="form-control" placeholder="20">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-dark">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Motorcycle Fare Modal -->
+<div class="modal fade" id="updateMotorrideModal" tabindex="-1" aria-labelledby="motorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="motorModalLabel">Update Motorcycle Fare Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Base Fare</label>
+            <input type="number" class="form-control" placeholder="PHP 30.00">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Per Kilometer</label>
+            <input type="number" class="form-control" placeholder="PHP 5.00">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Per Minute</label>
+            <input type="number" class="form-control" placeholder="PHP 2.00">
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Driver Share (%)</label>
+              <input type="number" class="form-control" placeholder="80">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Commission Rate (%)</label>
+              <input type="number" class="form-control" placeholder="20">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-dark">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
