@@ -38,14 +38,6 @@ namespace IT15_Project.Controllers
         {
             return View();
         }
-        public IActionResult RentOwner()
-        {
-            return View();
-        }
-        public IActionResult RentIntro()
-        {
-            return View();
-        }
         public IActionResult Admin()
         {
             return View();
@@ -62,6 +54,11 @@ namespace IT15_Project.Controllers
         {
             return View();
         }
+        public IActionResult Driver()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

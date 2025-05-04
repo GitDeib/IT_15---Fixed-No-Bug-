@@ -26,45 +26,48 @@
     </div>
 </div>
 
-<!-- Modal Service-->
+<!-- Modal: Choose Vehicle -->
 <div class="modal fade" id="chooseOptionModal" tabindex="-1" aria-labelledby="chooseOptionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="chooseOptionModalLabel">Choose Your Service</h5>
+                <h5 class="modal-title" id="chooseOptionModalLabel">Choose Your Vehicle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
                 <div class="container text-center">
                     <div class="row justify-content-center">
-                        <!-- Rent a Car -->
+
+                        <!-- Motorcycle Option -->
                         <div class="col-md-5 mb-4 mx-2">
-                            <a href="/Home/Rental" class="text-decoration-none text-dark">
-                                <div class="p-4 border rounded shadow-sm hover-shadow">
-                                    <h4>Rent a Car</h4>
-                                    <img src="https://img.freepik.com/free-vector/driving-concept-illustration_114360-14312.jpg?t=st=1745298964~exp=1745302564~hmac=acc57cdcc4d8e46e78da129598f119ba480a1de27e0632544edde70b5db05d52&w=826" alt="Affordable Rentals" class="mb-3 img-fluid" style="max-width: 250px;" />
-                                    <p>Affordable car and motorcycle rentals anytime you need them. Flexible terms, great prices.</p>
+                            <a href="/Home/Ride?vehicle=Motorcycle" class="text-decoration-none text-dark">
+                                <div class="p-4 border rounded shadow-sm hover-shadow h-100">
+                                    <h4>Motorcycle</h4>
+                                    <img src="https://img.freepik.com/free-vector/skeleton-rigind-motorbike_1415-115.jpg?t=st=1746339830~exp=1746343430~hmac=8a359075f4006291ac417053f549865d3f815c6e2734e14746b7b86acd53198a&w=826" alt="Motorcycle Ride" class="mb-3 img-fluid" style="max-width: 250px;" />
+                                    <p>Quick and affordable rides. Best for solo travel and beating traffic.</p>
                                 </div>
                             </a>
                         </div>
 
-                        <!-- Book a Ride -->
+                        <!-- Car Option -->
                         <div class="col-md-5 mb-4 mx-2">
-                            <a href="/Home/Ride" class="text-decoration-none text-dark">
-                                <div class="p-4 border rounded shadow-sm h-100 hover-shadow transition">
-                                    <h4>Book a Ride</h4>
-                                    <img src="https://img.freepik.com/free-vector/taxi-app-interface-illustration_23-2148487606.jpg?t=st=1745298709~exp=1745302309~hmac=341170f5b7a6c2466963a91c0a241769051a2b3dbfd160307f2c5b869116a906&w=826" alt="Instant Booking" class="mb-3 img-fluid" style="max-width: 250px;" />
-                                    <p>Get a ride in seconds with just a tap. Fast, reliable, and always nearby.</p>
+                            <a href="/Home/Ride?vehicle=Car" class="text-decoration-none text-dark">
+                                <div class="p-4 border rounded shadow-sm hover-shadow h-100">
+                                    <h4>Car</h4>
+                                    <img src="https://img.freepik.com/premium-vector/skeletons-hot-rod-ride_1196893-5217.jpg?w=826" alt="Car Ride" class="mb-3 img-fluid" style="max-width: 250px;" />
+                                    <p>Comfortable rides for groups or longer trips. Ideal for families or business travel.</p>
                                 </div>
                             </a>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <!-- Why Choose Us Section -->
@@ -120,7 +123,7 @@
         <div class="col-md-6 text-center text-md-start px-5" style="color: black;">
                 <h1 class="display-4 fw-bold">Let Your Vehicle Pay for Itself</h1>
                 <p class="lead">Got a car just sitting there? Put it to work and make money by renting it out!</p>
-                <button type="button" class="btn btn-dark btn-lg hover-dark" data-bs-toggle="modal" data-bs-target="#rentOwnerModal">
+                <button type="button" class="btn btn-dark btn-lg hover-dark">
                     Get Started!
                 </button>
         </div>

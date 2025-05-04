@@ -1,101 +1,207 @@
 ﻿@page
 @model RideBookingModel
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<!-- Mapbox -->
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" />
 
-<!-- GeoCoder -->
-<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
-<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
-
-<!-- Direction API -->
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
-<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css">
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Mapbox -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js"></script>
 
-<div class="row justify-content-center">
-        <div id='map' style="height: 500px;"></div> <!-- Set map height explicitly -->
-           
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js"></script>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet" />
+
+<!-- Fullscreen Map -->
+<div id="map" class="position-fixed start-0 w-100" style="top: 85px; bottom: 60px; z-index: 0;"></div>
+
+<div class="position-fixed start-0 w-100 shadow" style="top: 85px; z-index: 2;">
+    <div class="px-3 pb-3 bg-white bg-opacity-75 rounded-bottom" style="max-height: 180px;">
+        <h1 class="text-center fs-4 mb-3">Set Destination</h1>
+        <form class="row g-2 justify-content-center">
+            
+            <!-- Pickup and Dropoff Fields -->
+            <div class="col-12 col-md-3 col-lg-3">
+                <div class="form-floating position-relative">
+                    <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup">
+                    <label for="pickup">Pickup</label>
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary">
+                        <i class="fas fa-map-marker-alt fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3 col-lg-3">
+                <div class="form-floating position-relative">
+                    <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off">
+                    <label for="dropoff">Drop-off</label>
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger">
+                        <i class="fas fa-location-dot fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-2 col-lg-1">
+                <button type="button" class="btn btn-dark w-100 py-3 h-100" id="nextBtn" data-bs-toggle="offcanvas" data-bs-target="#sidepass" disabled>
+                    Next
+                </button>
+            </div>
+        </form>
+
+        <!-- Floating Button -->
+<button type="button" class="btn btn-dark rounded-circle shadow position-fixed" 
+        style="bottom: 20px; right: 20px; z-index: 1050;"
+        data-bs-toggle="offcanvas" data-bs-target="#sidepass" aria-controls="sidepass">
+    <i class="fas fa-car"></i>
+</button>
+
 </div>
 
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form class="border p-4 shadow-sm rounded bg-white">
-                <h4 class="text-center mb-4">Book Your Ride</h4>
-
-            <!-- Pickup Location -->
-            <div class="form-floating input-wrapper mb-4">
-                <input type="text" id="pickup-location" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" placeholder="Pickup Location" />
-                <label for="pickup-location">Pickup Location</label>
-            </div>
-
-            <!-- Drop-off Location -->
-            <div class="form-floating input-wrapper mb-4">
-                <input type="text" id="dropoff-location" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" placeholder="Drop-off Location" />
-                <label for="dropoff-location">Drop-off Location</label>
-            </div>
-
-                <!-- Date -->
-                <div class="form-floating input-wrapper mb-4">
-                    <input type="date" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" />
-                    <label>Date</label>
-                </div>
-
-                <!-- Time -->
-                <div class="form-floating input-wrapper mb-4">
-                    <input type="time" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" />
-                    <label>Time</label>
-                </div>
-
-                <!-- Ride Type -->
-                <div class="form-floating input-wrapper mb-4">
-                    <select class="form-select border-0 border-bottom rounded-0 shadow-none input-line">
-                        <option selected disabled>Select a ride type</option>
-                        <option>Standard</option>
-                        <option>XL (6-seater)</option>
-                        <option>Motorbike</option>
-                    </select>
-                    <label>Ride Type</label>
-                </div>
-
-                <!-- Special Instructions -->
-                <div class="form-floating input-wrapper mb-4">
-                    <textarea class="form-control border-0 border-bottom rounded-0 shadow-none input-line" placeholder="Special Instructions" style="height: 100px"></textarea>
-                    <label>Special Instructions (Optional)</label>
-                </div>
-
-                <button type="button" class="w-100 btn btn-dark btn-lg">Book Ride</button>
-            </form>
+    <!-- Sidebar Next -->
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="sidepass">
+        <div class="offcanvas-header bg-white border-bottom">
+            <h5 class="offcanvas-title text-black">Passenger</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
+
+        <div class="offcanvas-body">
+            <!-- Pickup and Dropoff Information -->
+            <div class="mb-3">
+                <h6><strong>Pickup:</strong> <span id="pickupLocationDisplay">N/A</span></h6>
+                <h6><strong>Dropoff:</strong> <span id="dropoffLocationDisplay">N/A</span></h6>
+            </div>
+
+            <!-- Seat Type Selection -->
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select" id="rideType">
+                        <option disabled selected>Select Type</option>
+                        <option>Any</option>
+                        <option>4-seater</option>
+                        <option>6-seater</option>
+                    </select>
+                    <label for="rideType">Seat Type</label>
+                </div>
+            </div>
+
+            <!-- Distance and Time Information -->
+            <div class="mb-3">
+                <h6><strong>Distance:</strong> <span id="distanceDisplay">N/A</span> </h6>
+                <h6><strong>Estimated Time:</strong> <span id="timeDisplay">N/A</span> </h6>
+            </div>
+
+            <!-- Rate Info Section -->
+            <div class="row text-center">
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Base Fare:</strong> ₱50.00</p>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Per Kilometer:</strong> ₱12.00/km</p>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Per Minute:</strong> ₱3.00/min</p>
+                </div>
+            </div>
+
+            <!-- Total Fare Calculation -->
+            <div class="text-center mt-3">
+                <h5><strong>Estimated Total Fare:</strong> ₱<span id="totalFare">N/A</span></h5>
+            </div>
+
+            <hr>
+
+            <!-- Assigned Driver Details -->
+            <div class="text-center mt-3">
+                <h5><strong>Assign Driver:</strong></h5>
+            </div>
+            <div class="bg-light text-dark p-3 rounded d-flex align-items-center gap-3">
+                <!-- Profile Picture -->
+                <img src="~/lib/women.jpg" alt="Driver Photo" class="rounded-circle" width="60" height="60">
+
+                <!-- Driver Info -->
+                <div>
+                    <h6 class="mb-1"><strong>Juan Dela Cruz</strong></h6>
+                    <p class="mb-0"><strong>Vehicle:</strong> Toyota Vios</p>
+                    <p class="mb-0"><strong>Plate No.:</strong> ABC-1234</p>
+                    <p class="mb-0"><strong>Contact:</strong> 0917-123-4567</p>
+                </div>
+            </div>
+
+        </div>
+
+        <button type="button" class="btn btn-dark">
+            Book
+        </button>
     </div>
 
-    <style>
-        .input-line:focus {
-            border-color: #007bff;
-            box-shadow: none;
-        }
 
-        .input-wrapper label {
-            font-size: 0.875rem;
-        }
-
-        .form-floating > .form-control:focus ~ label,
-        .form-floating > .form-control:not(:placeholder-shown) ~ label,
-        .form-floating > .form-select:focus ~ label,
-        .form-floating > .form-select:not(:placeholder-shown) ~ label {
-            opacity: 1;
-            transform: scale(0.85) translateY(-0.8rem) translateX(0.15rem);
-        }
-
-        form {
-            background-color: #fff;
-        }
-    </style>
-
+<!-- Your custom map logic -->
 <script src="~/js/map.js"></script>
+
+
+    <!-- Sidepass -->
+
+<script>
+        // Function to check if pickup and dropoff are filled
+        function checkPickupDropoff() {
+            const pickup = document.getElementById('pickup').value;
+            const dropoff = document.getElementById('dropoff').value;
+            const nextBtn = document.getElementById('nextBtn');
+
+            // Enable the "Next" button only if both fields are filled
+            if (pickup && dropoff) {
+                nextBtn.disabled = false;  // Enable the button
+            } else {
+                nextBtn.disabled = true;   // Disable the button
+            }
+        }
+
+        // Function to open sidebar when conditions are met
+        function openSidebar() {
+            const pickup = document.getElementById('pickup').value;
+            const dropoff = document.getElementById('dropoff').value;
+
+            if (pickup && dropoff) {
+                // Open the sidebar if both fields are filled
+                const sidebar = new bootstrap.Offcanvas(document.getElementById('sidepass'));
+                sidebar.show();
+            }
+        }
+
+        // Attach event listeners to both pickup and dropoff inputs
+        document.getElementById('pickup').addEventListener('input', checkPickupDropoff);
+        document.getElementById('dropoff').addEventListener('input', checkPickupDropoff);
+
+        // Attach click event to the "Next" button to trigger sidebar
+        document.getElementById('nextBtn').addEventListener('click', openSidebar);
+
+</script>
+
+    <script>
+        // Function to calculate and display the distance and estimated time
+        function updateSidebar() {
+            const pickup = document.getElementById('pickup').value;
+            const dropoff = document.getElementById('dropoff').value;
+
+            // Check if both pickup and dropoff are filled
+            if (pickup && dropoff) {
+
+                // Update the sidebar with these values
+                document.getElementById('pickupLocationDisplay').innerText = pickup;
+                document.getElementById('dropoffLocationDisplay').innerText = dropoff;
+               
+            }
+        }
+
+        // Attach event listeners to the pickup and dropoff fields to update the sidebar
+        document.getElementById('pickup').addEventListener('input', updateSidebar);
+        document.getElementById('dropoff').addEventListener('input', updateSidebar);
+    </script>
