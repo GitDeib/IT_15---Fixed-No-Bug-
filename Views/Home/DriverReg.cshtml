@@ -1,57 +1,251 @@
-﻿
+﻿<div class="container-fluid py-5 animate-fade-in-up delay-1">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-8 animate-fade-in">
+            <form class="border p-4 shadow-sm rounded bg-white">
+                <h4 class="text-center mb-4">Become a Driver</h4>
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-center mb-4">Become a Driver</h2>
-        <form>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" placeholder="Enter your full name" />
+                <div class="row g-3">
+                    <!-- First Name -->
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+                            <label for="firstName">First Name</label>
+                        </div>
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="middleName" placeholder="Middle Name">
+                            <label for="middleName">Middle Name (optional)</label>
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+                            <label for="lastName">Last Name</label>
+                        </div>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="phone" placeholder="09123456789" required>
+                            <label for="phone">Phone Number</label>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                            <label for="email">Email Address</label>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" placeholder="Password" autocomplete="new-password" required />
+                            <label>Password</label>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input class="form-control" placeholder="Confirm Password" autocomplete="new-password" required />
+                            <label>Confirm Password</label>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Type -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="vehicleType" required>
+                                <option selected disabled>Select a type</option>
+                                <option>4-seater</option>
+                                <option>6-seater</option>
+                            </select>
+                            <label for="vehicleType">Vehicle Seat</label>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Model -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="vehicleModel" placeholder="e.g. Toyota Vios 2022" required>
+                            <label for="vehicleModel">Vehicle Model</label>
+                        </div>
+                    </div>
+
+                    <!-- Plate Number -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="plateNumber" placeholder="e.g. ABC-1234" required>
+                            <label for="plateNumber">Plate Number</label>
+                        </div>
+                    </div>
+
+                    <!-- Driver's License Upload -->
+                    <div class="col-md-6">
+                        <label class="form-label">Upload Driver's License</label>
+                        <input type="file" class="form-control" id="licenseUpload" required>
+                    </div>
+
+                    <!-- Vehicle Registration Upload -->
+                    <div class="col-md-6">
+                        <label class="form-label">Upload Vehicle Registration</label>
+                        <input type="file" class="form-control" id="registrationUpload" required>
+                    </div>
+
+                    <!-- Motivation Textarea -->
+                    <div class="col-12">
+                        <label class="form-label">Why do you want to drive with us?</label>
+                        <textarea class="form-control" rows="3" placeholder="Tell us briefly..." required></textarea>
+                    </div>
+
+                    <!-- Terms and Conditions Checkbox -->
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                            <label class="form-check-label" for="termsCheck">
+                                <p>
+                                    I have read and agree to the
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#termsandconModal">Terms and Conditions</a>.
+                                </p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-dark hover-dark btn-lg mt-3 px-5" id="submitBtn" data-bs-toggle="modal" data-bs-target="#notificationModal" disabled>
+                            Submit Application
+                        </button>
+                    </div>
+
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" placeholder="e.g. 09123456789" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" placeholder="e.g. you@example.com" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Vehicle Type</label>
-                    <select class="form-select">
-                        <option selected disabled>Select a type</option>
-                        <option>Sedan</option>
-                        <option>SUV</option>
-                        <option>Motorcycle</option>
-                        <option>Van</option>
-                        <option>Tricycle</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Vehicle Model</label>
-                    <input type="text" class="form-control" placeholder="e.g. Toyota Vios 2022" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Plate Number</label>
-                    <input type="text" class="form-control" placeholder="e.g. ABC-1234" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Upload Driver's License</label>
-                    <input type="file" class="form-control" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Upload Vehicle Registration</label>
-                    <input type="file" class="form-control" />
-                </div>
-                <div class="col-12 mb-3">
-                    <label class="form-label">Why do you want to drive with us?</label>
-                    <textarea class="form-control" rows="3" placeholder="Tell us briefly..."></textarea>
-                </div>
-                <div class="col-12 text-center">
-                    <button type="button" class="btn btn-primary px-5">Submit Application</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
+
+
+<div class="modal fade" id="termsandconModal" tabindex="-1" aria-labelledby="termsandcon" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="chooseOptionModalLabel">Terms and Conditions</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="container">
+                    <div class="modal-body">
+                        <h6>1. Introduction</h6>
+                        <p>By applying to become a driver on our platform, you agree to abide by the following terms and conditions. Please read them carefully. If you do not agree with any part of these terms, do not proceed with your application.</p>
+
+                        <h6>2. Eligibility</h6>
+                        <ul>
+                            <li>Be at least 21 years of age.</li>
+                            <li>Hold a valid driver's license.</li>
+                            <li>Own or have access to a roadworthy vehicle with a valid registration.</li>
+                            <li>Have a clean driving record, with no major violations or accidents in the past three years.</li>
+                            <li>Comply with all local driving laws and regulations.</li>
+                        </ul>
+
+                        <h6>3. Vehicle Requirements</h6>
+                        <ul>
+                            <li>Be in good working condition and regularly maintained.</li>
+                            <li>Be registered and insured as required by law.</li>
+                            <li>Have a clean and safe interior for passengers.</li>
+                            <li>Be free of any illegal modifications or equipment that might pose a risk to passengers.</li>
+                        </ul>
+
+                        <h6>4. Driver's License and Insurance</h6>
+                        <p>You are required to have a valid and up-to-date driver’s license, along with the necessary insurance coverage for both yourself and your passengers. You are also required to provide proof of these documents during the registration process and upon request.</p>
+
+                        <h6>5. Behavior and Conduct</h6>
+                        <p>As a driver, you agree to:</p>
+                        <ul>
+                            <li>Treat all passengers with respect and professionalism.</li>
+                            <li>Maintain a clean and respectful environment in your vehicle.</li>
+                            <li>Abide by traffic laws and regulations at all times.</li>
+                            <li>Ensure the safety and well-being of your passengers throughout their ride.</li>
+                        </ul>
+
+                        <h6>6. Platform Use</h6>
+                        <p>You agree to use the platform solely for its intended purpose and in accordance with the laws of your jurisdiction. Misuse of the platform, including but not limited to fraud, harassment, and unsafe driving, may result in suspension or termination of your account.</p>
+
+                        <h6>7. Payment and Fees</h6>
+                        <p>You will receive compensation for completed rides as per the agreed-upon rates set by the platform. The platform reserves the right to deduct service fees or other applicable charges before payment is made to you. Payments will be made on a regular basis, as specified in the driver agreement.</p>
+
+                        <h6>8. Background Checks</h6>
+                        <p>You authorize the platform to perform background checks, including but not limited to criminal record checks and driving history checks, to verify your eligibility to drive on the platform. Any criminal convictions or driving violations may result in disqualification from the platform.</p>
+
+                        <h6>9. Termination</h6>
+                        <p>The platform reserves the right to terminate your account at any time for any reason, including but not limited to:</p>
+                        <ul>
+                            <li>Failure to comply with these Terms and Conditions.</li>
+                            <li>Unsafe driving behavior or violations of traffic laws.</li>
+                            <li>Misuse or abuse of the platform.</li>
+                            <li>Fraudulent activity or misrepresentation.</li>
+                        </ul>
+
+                        <h6>10. Indemnification</h6>
+                        <p>You agree to indemnify, defend, and hold harmless the platform, its affiliates, and their respective officers, directors, employees, and agents from and against any claims, damages, losses, or liabilities arising from your use of the platform, including but not limited to personal injury, property damage, or violations of laws.</p>
+
+                        <h6>11. Limitation of Liability</h6>
+                        <p>The platform is not responsible for any direct, indirect, incidental, special, or consequential damages, or loss of profits, arising from the use of the platform or from any interaction between you and passengers, except where prohibited by law.</p>
+
+                        <h6>12. Privacy and Data Security</h6>
+                        <p>By becoming a driver, you consent to the collection, storage, and use of your personal data in accordance with the platform’s Privacy Policy. Your data will be used for the purpose of facilitating rides, processing payments, and ensuring safety and security on the platform.</p>
+
+                        <h6>13. Changes to Terms</h6>
+                        <p>The platform reserves the right to modify or update these Terms and Conditions at any time. Any changes will be communicated to you, and continued use of the platform will signify your acceptance of the updated terms.</p>
+
+                        <h6>14. Governing Law</h6>
+                        <p>These Terms and Conditions will be governed by and construed in accordance with the laws of the jurisdiction in which the platform operates.</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">I Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!---Modal Notification-->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="notificationModalLabel">Application Submitted</h5>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for applying as a driver! Our team will review your application.</p>
+                <p>You will be notified via your contact number or email once your application is approved.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById('termsCheck');
+        const submitBtn = document.getElementById('submitBtn');
+
+        checkbox.addEventListener('change', function () {
+            submitBtn.disabled = !this.checked;
+        });
+    });
+</script>
+
