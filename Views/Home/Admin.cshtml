@@ -1,4 +1,7 @@
-﻿<h4>Dashboard</h4>
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<h4>Dashboard</h4>
 
 <div class="row">
     <div class="col-12 col-md-3 mb-3">
