@@ -1,4 +1,7 @@
-﻿<div class="container-fluid">
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="container-fluid">
     <h1 class="mt-4">User Management</h1>
 
     <!-- Tabs -->

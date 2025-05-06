@@ -21,7 +21,7 @@ namespace IT15_Project.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
-        [Authorize]
+        [Authorize(Roles = "Passenger")]
         public async Task<IActionResult> Index()
         {
             List<string> roles = new List<string>();
@@ -36,22 +36,31 @@ namespace IT15_Project.Controllers
             return View();
         }
 
-        public IActionResult Privacy() => View();
+        /*Passenger Routes*/
+        [Authorize(Roles = "Passenger")]
         public IActionResult Ride() => View();
-        public IActionResult Rental() => View();
-        public IActionResult DriverReg() => View();
-        public IActionResult DriverIntro() => View();
-
-        [Authorize]
-        public IActionResult Admin() => View();
-        [Authorize]
-        public IActionResult Users() => View();
-        [Authorize]
-        public IActionResult PayEarn() => View();
-        [Authorize]
-        public IActionResult RateReview() => View();
-        public IActionResult Driver() => View();
+        [Authorize(Roles = "Passenger")]
         public IActionResult RideMotor() => View();
+        public IActionResult DriverReg() => View();
+
+        public IActionResult DriverIntro() => View();
+        public IActionResult Privacy() => View();
+
+
+
+        /*Admin Routes*/
+        [Authorize(Roles = "Admin")]
+        public IActionResult Admin() => View();
+        [Authorize(Roles = "Admin")]
+        public IActionResult Users() => View();
+        [Authorize(Roles = "Admin")]
+        public IActionResult PayEarn() => View();
+        [Authorize(Roles = "Admin")]
+        public IActionResult RateReview() => View();
+
+        /*Driver Routes*/
+        [Authorize(Roles = "Driver")]
+        public IActionResult Driver() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

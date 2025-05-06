@@ -1,4 +1,7 @@
-﻿<div class="container py-5">
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="container py-5">
     <h2 class="mb-4">Ratings & Reviews Overview</h2>
 
     <!-- Summary Cards -->

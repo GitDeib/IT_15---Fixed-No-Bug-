@@ -1,4 +1,7 @@
-﻿<style>
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Driver")]
+
+<style>
     /* Default style (visible instructions) */
     .directions-control.directions-control-instructions {
         transition: all 0.3s ease;
