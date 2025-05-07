@@ -32,7 +32,7 @@
                 <div class="form-floating position-relative">
                     <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup">
                     <label for="pickup">Pickup</label>
-                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary">
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary" onclick="addPickupPin()">
                         <i class="fas fa-map-marker-alt fa-lg"></i>
                     </button>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="form-floating position-relative">
                     <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off">
                     <label for="dropoff">Drop-off</label>
-                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger">
+                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger" onclick="addDropoffPin()">
                         <i class="fas fa-location-dot fa-lg"></i>
                     </button>
                 </div>
@@ -101,20 +101,22 @@
             <!-- Rate Info Section -->
             <div class="row text-center">
                 <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Base Fare:</strong> ₱50.00</p>
+                    <p class="mb-0"><strong>Base Fare:</strong> <span id="baseFare">₱50.00</span></p>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Kilometer:</strong> ₱12.00/km</p>
+                    <p class="mb-0"><strong>Per Kilometer:</strong> <span id="perKm">₱12.00/km</span></p>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Minute:</strong> ₱3.00/min</p>
+                    <p class="mb-0"><strong>Per Minute:</strong> <span id="perMinute">₱3.00/min</span></p>
                 </div>
             </div>
 
+
             <!-- Total Fare Calculation -->
             <div class="text-center mt-3">
-                <h5><strong>Estimated Total Fare:</strong> ₱<span id="totalFare">N/A</span></h5>
+                <h5><strong>Estimated Total Fare:</strong> <span id="totalFare">N/A</span></h5>
             </div>
+
 
             <hr>
 
@@ -144,25 +146,24 @@
 
 
 <!-- Your custom map logic -->
-<script src="~/js/map.js"></script>
-
-
-    <!-- Sidepass -->
+<script src="~/js/map - v3.js"></script>
 
 <script>
-        // Function to check if pickup and dropoff are filled
-        function checkPickupDropoff() {
-            const pickup = document.getElementById('pickup').value;
-            const dropoff = document.getElementById('dropoff').value;
-            const nextBtn = document.getElementById('nextBtn');
+            //Sidepass
 
-            // Enable the "Next" button only if both fields are filled
-            if (pickup && dropoff) {
-                nextBtn.disabled = false;  // Enable the button
-            } else {
+            // Function to check if pickup and dropoff are filled
+            function checkPickupDropoff() {
+                const pickup = document.getElementById('pickup').value;
+                const dropoff = document.getElementById('dropoff').value;
+                const nextBtn = document.getElementById('nextBtn');
+
+                // Enable the "Next" button only if both fields are filled
+                if (pickup && dropoff) {
+                    nextBtn.disabled = false;  // Enable the button
+                } else {
                 nextBtn.disabled = true;   // Disable the button
+                }
             }
-        }
 
         // Function to open sidebar when conditions are met
         function openSidebar() {
@@ -183,9 +184,7 @@
         // Attach click event to the "Next" button to trigger sidebar
         document.getElementById('nextBtn').addEventListener('click', openSidebar);
 
-</script>
 
-    <script>
         // Function to calculate and display the distance and estimated time
         function updateSidebar() {
             const pickup = document.getElementById('pickup').value;
@@ -197,11 +196,12 @@
                 // Update the sidebar with these values
                 document.getElementById('pickupLocationDisplay').innerText = pickup;
                 document.getElementById('dropoffLocationDisplay').innerText = dropoff;
-               
+
             }
         }
 
         // Attach event listeners to the pickup and dropoff fields to update the sidebar
         document.getElementById('pickup').addEventListener('input', updateSidebar);
         document.getElementById('dropoff').addEventListener('input', updateSidebar);
-    </script>
+
+</script>
