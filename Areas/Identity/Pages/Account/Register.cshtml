@@ -59,10 +59,6 @@
                         <div class="form-floating">
                             <input type="text" name="ContactNumber" class="form-control" placeholder="0912..." required />
                             <label>Contact Number</label>
-                           @*  <!--OTP Button-->
-                                <button class="btn btn-dark hover-dark" data-bs-toggle="modal" data-bs-target="#chooseOtpModal">
-                                    Verify
-                                </button> *@
                         </div>
                     </div>
 
@@ -121,7 +117,7 @@
 
 
 
-<!-- OTP Modal -->
+@* <!-- OTP Modal -->
 <div class="modal fade" id="chooseOtpModal" tabindex="-1" aria-labelledby="OTPModal" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
@@ -158,9 +154,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
 
-<script>
+@* <script>
     document.addEventListener("DOMContentLoaded", function () {
         const inputs = document.querySelectorAll('.otp-input');
         inputs.forEach((input, index) => {
@@ -177,7 +173,7 @@
             });
         });
     });
-</script>
+</script> *@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
