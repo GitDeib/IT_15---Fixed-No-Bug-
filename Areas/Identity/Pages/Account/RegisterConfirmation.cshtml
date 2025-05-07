@@ -4,7 +4,6 @@
     ViewData["Title"] = "Register confirmation";
 }
 
-<h1>@ViewData["Title"]</h1>
 @{
     if (@Model.DisplayConfirmAccountLink)
     {
@@ -15,10 +14,15 @@
     }
     else
     {
-        <div class="text-center mt-5 glass-panel">
-            <p>Please check your email to confirm your account.</p>
-            <p class="text-sm text-gray-500 mt-2">Note: It might be in your Spam or Junk folder.</p>
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="col-md-5 text-center mt-4 glass-panel p-5">
+                <h1>@ViewData["Title"]</h1>
+                <hr />
+                <p>Please check your email to confirm your account.</p>
+                <small class="text-sm text-gray-500 mt-2">Note: It might be in your Spam or Junk folder.</small>
+            </div>
         </div>
+
 
     }
 }
