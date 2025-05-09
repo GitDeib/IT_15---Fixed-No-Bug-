@@ -33,15 +33,16 @@
                     <!-- First Name -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" name="FirstName" class="form-control" placeholder="First Name" required />
+                            <input asp-for="Input.FirstName" type="text" class="form-control" placeholder="First Name" required />
                             <label>First Name</label>
+                            <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <!-- Middle Name -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" name="MiddleName" class="form-control" placeholder="Middle Name (optional)" />
+                            <input asp-for="Input.MiddleName" type="text" class="form-control" placeholder="Middle Name (optional)" />
                             <label>Middle Name (optional)</label>
                         </div>
                     </div>
@@ -49,24 +50,27 @@
                     <!-- Last Name -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" name="LastName" class="form-control" placeholder="Last Name" required />
+                            <input asp-for="Input.LastName" type="text" class="form-control" placeholder="Last Name" required />
                             <label>Last Name</label>
+                            <span asp-validation-for="Input.LastName" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <!-- Contact Number -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" name="ContactNumber" class="form-control" placeholder="0912..." required />
+                            <input asp-for="Input.PhoneNumber" type="text" class="form-control" placeholder="0912..." required />
                             <label>Contact Number</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <!-- Address -->
                     <div class="col-md-12">
                         <div class="form-floating">
-                            <input type="text" name="Address" class="form-control" placeholder="Address" required />
+                            <input asp-for="Input.Address" type="text" class="form-control" placeholder="Address" required />
                             <label>Address</label>
+                            <span asp-validation-for="Input.Address" class="text-danger small"></span>
                         </div>
                     </div>
 
@@ -82,7 +86,7 @@
                     <!-- Profile Photo -->
                     <div class="col-md-6">
                         <label class="form-label">Profile Photo (optional)</label>
-                        <input type="file" name="ProfilePhoto" class="form-control" />
+                        <input asp-for="Input.ProfilePhoto" type="file" class="form-control" />
                     </div>
 
                     <!-- Password -->

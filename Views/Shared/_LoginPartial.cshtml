@@ -1,32 +1,48 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 
 <ul class="navbar-nav">
     
     @if (SignInManager.IsSignedIn(User))
     {
+        var currentUser = await UserManager.GetUserAsync(User);
+        var profilePhotoPath = currentUser?.ProfilePhotoPath;
+        var displayName = $"{currentUser?.LastName}, {currentUser?.FirstName}";
+
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+            <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @if (!string.IsNullOrEmpty(profilePhotoPath))
+                {
+                    <img src="@profilePhotoPath" alt="Profile Photo" class="rounded-circle border border-white shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" />
+                }
+                else
+                {
+                    <i class="bi bi-person-circle" style="font-size: 32px;"></i>
+                }
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li style="font-size: 20px;">
-                    <b>@User.Identity?.Name</b>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-2" aria-labelledby="userDropdown" style="min-width: 220px;">
+                <li class="text-center mb-2">
+                    <strong style="font-size: 15px;">@displayName</strong>
+                    <hr class="my-2" />
                 </li>
                 <li>
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Manage Account</a>
+                    <a class="dropdown-item py-2 d-flex align-items-center gap-2" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="bi bi-gear"></i> Manage Account
+                    </a>
                 </li>
                 <li>
                     <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")">
-                        <button type="submit" class="dropdown-item">Logout</button>
+                        <button type="submit" class="dropdown-item py-2 d-flex align-items-center gap-2 text-danger">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
                     </form>
                 </li>
             </ul>
         </li>
-
     }
+
     else
     {
         <!-- Collapsible Content -->
