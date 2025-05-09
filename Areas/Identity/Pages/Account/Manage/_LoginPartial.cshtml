@@ -1,10 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using IT15_Project.Models
+
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-
 <ul class="navbar-nav">
-    
     @if (SignInManager.IsSignedIn(User))
     {
         var currentUser = await UserManager.GetUserAsync(User);
@@ -46,9 +46,8 @@
             </ul>
         </li>
     }
-
-    else
-    {
+else
+{
         <!-- Collapsible Content -->
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
             <ul class="navbar-nav">
@@ -68,4 +67,5 @@
         <li class="nav-item">
             <a class="nav-link text-white hover-whiteline" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
-    }
+}
+</ul>

@@ -1,0 +1,156 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3 class="text-center">@ViewData["Title"]</h3>
+
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="d-flex justify-content-center mb-4">
+    <div class="position-relative">
+        @if (!string.IsNullOrEmpty(Model.ProfilePhotoPath))
+        {
+            <img src="@Url.Content("~/uploads/profilephotos/" + Model.ProfilePhotoPath)" alt="Profile Photo"
+                 class="rounded-circle border border-dark shadow-sm"
+                 style="width: 145px; height: 145px; object-fit: cover;" />
+        }
+
+        else
+        {
+            <i class="bi bi-person-circle text-dark" style="font-size: 100px;"></i>
+        }
+
+        <!-- Pencil Icon (opens modal) -->
+        <button type="button" class="position-absolute bottom-0 end-0 bg-white rounded-circle p-1 shadow"
+                title="Edit Photo"
+                data-bs-toggle="modal" data-bs-target="#changePhotoModal"
+                style="transform: translate(25%, 25%); border: none;">
+            <i class="bi bi-pencil-fill text-dark"></i>
+        </button>
+
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 glass-panel">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+
+            <!-- First Row: First, Middle, Last Name -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" />
+                        <label asp-for="Input.FirstName"></label>
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="Input.MiddleName" class="form-control" placeholder="Middle Name" />
+                        <label asp-for="Input.MiddleName"></label>
+                        <span asp-validation-for="Input.MiddleName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" />
+                        <label asp-for="Input.LastName"></label>
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row: Address and Phone Number -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Input.Address" class="form-control" placeholder="Address" />
+                        <label asp-for="Input.Address"></label>
+                        <span asp-validation-for="Input.Address" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone Number" />
+                        <label asp-for="Input.PhoneNumber"></label>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-dark">
+                <i class="bi bi-save"></i>
+                Save
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Change Photo Modal -->
+<div class="modal fade" id="changePhotoModal" tabindex="-1" aria-labelledby="changePhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePhotoModalLabel">Update Profile Photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form asp-page-handler="ChangePhoto" method="post" enctype="multipart/form-data">
+                    <div class="mb-3 text-center">
+                        <!-- Image Preview (centered) -->
+                        <img id="profileImage" src="" alt="Profile Photo" class="rounded-circle border border-dark shadow-sm"
+                             style="width: 150px; height: 150px; object-fit: cover;" />
+                    </div>
+
+                    <div class="mb-3 d-flex">
+                        <!-- Input for selecting photo (left side) -->
+                        <input type="file" name="ProfilePhoto" class="form-control me-2" id="profilePhotoInput" onchange="previewImage(event)" />
+
+                        <!-- Upload Button (right side) -->
+                        <button type="submit" class="btn btn-dark">
+                            <i class="bi bi-upload"></i> Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <!-- Separate form for Remove button -->
+                <form asp-page-handler="RemovePhoto" method="post" class="w-100 text-start">
+                    <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash"></i> Remove</button> <!-- Full width button -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<!-- JavaScript to show image preview -->
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            const imageElement = document.getElementById('profileImage');
+            imageElement.src = reader.result; // Set the preview to the selected file's data URL
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Read the file as a data URL (base64 encoded)
+        }
+    }
+</script>
