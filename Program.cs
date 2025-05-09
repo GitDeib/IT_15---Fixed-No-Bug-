@@ -71,4 +71,77 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// Seed of admin account!
+await SeedAdminAsync(app);
+
 app.Run();
+
+
+
+
+// Seed of admin account!
+static async Task SeedAdminAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    try
+    {
+        // Make sure DB is reachable
+        if (!await context.Database.CanConnectAsync())
+        {
+            Console.WriteLine(" Cannot connect to database.");
+            return;
+        }
+
+        string adminRole = "Admin";
+        string adminEmail = "e.deono.537918@umindanao.edu.ph";
+
+        // Skip role creation if role already exists
+        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+        if (existingAdmin == null)
+        {
+            var adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                FirstName = "System",
+                LastName = "Admin",
+                EmailConfirmed = true
+            };
+
+            var result = await userManager.CreateAsync(adminUser, "Admin123!");
+            if (result.Succeeded)
+            {
+                // Only add to role if the role exists
+                var roleExists = await roleManager.RoleExistsAsync(adminRole);
+                if (roleExists)
+                {
+                    await userManager.AddToRoleAsync(adminUser, adminRole);
+                    Console.WriteLine(" Admin user created and assigned to role successfully.");
+                }
+                else
+                {
+                    Console.WriteLine($" Role '{adminRole}' does not exist.");
+                }
+            }
+            else
+            {
+                Console.WriteLine(" Failed to create admin user:");
+                foreach (var error in result.Errors)
+                    Console.WriteLine($"- {error.Description}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Admin user already exists.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(" Error during admin seeding: " + ex.Message);
+    }
+}
