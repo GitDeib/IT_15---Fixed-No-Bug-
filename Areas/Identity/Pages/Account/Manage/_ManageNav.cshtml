@@ -1,7 +1,10 @@
 ﻿@using IT15_Project.Models
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+    var user = await UserManager.GetUserAsync(User);
+    var isDriver = await UserManager.IsInRoleAsync(user, "Driver");
 }
 <ul class="nav nav-pills flex-column mb-3 glass-panel p-3">
     <li class="nav-item mb-2">
@@ -32,9 +35,17 @@
             <i class="bi bi-shield-check me-2"></i> Two-factor authentication
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item mb-2">
         <a class="nav-link text-dark d-flex align-items-center @ManageNavPages.PersonalDataNavClass(ViewContext)" asp-page="./PersonalData">
             <i class="bi bi-folder me-2"></i> Personal data
         </a>
     </li>
+    @if (isDriver)
+    {
+        <li class="nav-item mb-2">
+            <a class="nav-link text-dark d-flex align-items-center @ManageNavPages.DriverApplicationNavClass(ViewContext)" asp-page="./DriverApplication">
+                <i class="bi bi-file-earmark-text me-2"></i> Driver Application
+            </a>
+        </li>
+    }
 </ul>

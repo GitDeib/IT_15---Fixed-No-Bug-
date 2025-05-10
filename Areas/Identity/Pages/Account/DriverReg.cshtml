@@ -63,7 +63,7 @@
                     <!-- Profile Photo -->
                     <div class="col-md-6">
                         <label class="form-label">Profile Photo (optional)</label>
-                        <input asp-for="Input.ProfilePhoto" type="file" class="form-control" />
+                        <input asp-for="Input.ProfilePhoto" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
                     </div>
 
                     <!-- Password -->
@@ -130,22 +130,22 @@
                     <!-- File Uploads -->
                     <div class="col-md-6">
                         <label>Driver's License</label>
-                        <input asp-for="Input.DriverLicense" type="file" class="form-control" />
+                        <input asp-for="Input.DriverLicense" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
                         <span asp-validation-for="Input.DriverLicense" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label>CR (Certificate of Registration)</label>
-                        <input asp-for="Input.CertificateRegistration" type="file" class="form-control" />
+                        <input asp-for="Input.CertificateRegistration" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
                         <span asp-validation-for="Input.CertificateRegistration" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label>OR (Official Receipt)</label>
-                        <input asp-for="Input.OfficialReceipt" type="file" class="form-control" />
+                        <input asp-for="Input.OfficialReceipt" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
                         <span asp-validation-for="Input.OfficialReceipt" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label>NBI Clearance</label>
-                        <input asp-for="Input.NBIClearance" type="file" class="form-control" />
+                        <input asp-for="Input.NBIClearance" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
                         <span asp-validation-for="Input.NBIClearance" class="text-danger"></span>
                     </div>
 

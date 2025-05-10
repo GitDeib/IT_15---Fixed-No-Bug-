@@ -1,0 +1,163 @@
+﻿@page
+@model DriverApplicationModel
+@{
+    ViewData["Title"] = "Driver Application";
+    ViewData["ActivePage"] = ManageNavPages.DriverApplication;
+}
+
+<h3 class="text-center mb-4">@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="glass-panel">
+            <form id="profile-form" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                @{
+                    string status = Model.Input?.Status ?? "Unknown";
+                    string statusClass = status switch
+                    {
+                        "Verified" => "bg-success text-white",
+                        "Not Verified" => "bg-warning text-dark",
+                        "Banned" => "bg-danger text-white",
+                        _ => "bg-secondary text-white"
+                    };
+                }
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Input.Status" class="form-control @statusClass" placeholder="Status" disabled />
+                    <label asp-for="Input.Status">Status</label>
+                </div>
+
+
+                <!-- First Row -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Input.VehicleType" class="form-select" id="vehicleSelect" required>
+                                <option selected disabled>Select Vehicle Type</option>
+                                <option value="car">Car</option>
+                                <option value="motor">Motorcycle</option>
+                            </select>
+                            <label asp-for="Input.VehicleType">Vehicle Type</label>
+                            <span asp-validation-for="Input.VehicleType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Input.VehicleSeat" class="form-select" id="vehicleType" disabled>
+                                <option selected disabled>Select a Seat Type</option>
+                                <option>4-seater</option>
+                                <option>6-seater</option>
+                            </select>
+                            <label asp-for="Input.VehicleSeat">Vehicle Seat</label>
+                            <span asp-validation-for="Input.VehicleSeat" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.VehicleModel" class="form-control" placeholder="Vehicle Model" />
+                            <label asp-for="Input.VehicleModel">Vehicle Model</label>
+                            <span asp-validation-for="Input.VehicleModel" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.PlateNumber" class="form-control" placeholder="Plate Number" />
+                            <label asp-for="Input.PlateNumber">Plate Number</label>
+                            <span asp-validation-for="Input.PlateNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <h5 class="mb-3">Driver Documents</h5>
+                <p class="text-muted">You may re-upload if a document is missing or rejected by admin.</p>
+
+                @{
+                    var driverLicenseStatus = string.IsNullOrEmpty(Model.Input?.DriverLicense) ? "Not Submitted ❌" : "Submitted ✅";
+                    var certRegStatus = string.IsNullOrEmpty(Model.Input?.CertificateRegistration) ? "Not Submitted ❌" : "Submitted ✅";
+                    var orStatus = string.IsNullOrEmpty(Model.Input?.OfficialReceipt) ? "Not Submitted ❌" : "Submitted ✅";
+                    var nbiStatus = string.IsNullOrEmpty(Model.Input?.NBIClearance) ? "Not Submitted ❌" : "Submitted ✅";
+                }
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Input.DriverLicense" class="form-label">
+                            Driver's License
+                            <span class="badge @(driverLicenseStatus.Contains("✅") ? "bg-success" : "bg-danger")">@driverLicenseStatus</span>
+                        </label>
+                        <input asp-for="Input.DriverLicensePath" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Input.CertificateRegistration" class="form-label">
+                            Certificate of Registration
+                            <span class="badge @(certRegStatus.Contains("✅") ? "bg-success" : "bg-danger")">@certRegStatus</span>
+                        </label>
+                        <input asp-for="Input.CertificateRegistrationPath" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Input.OfficialReceipt" class="form-label">
+                            Official Receipt
+                            <span class="badge @(orStatus.Contains("✅") ? "bg-success" : "bg-danger")">@orStatus</span>
+                        </label>
+                        <input asp-for="Input.OfficialReceiptPath" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Input.NBIClearance" class="form-label">
+                            NBI Clearance
+                            <span class="badge @(nbiStatus.Contains("✅") ? "bg-success" : "bg-danger")">@nbiStatus</span>
+                        </label>
+                        <input asp-for="Input.NBIClearancePath" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </div>
+                </div>
+
+
+
+                <!-- Submit -->
+                <div class="d-grid">
+                    <button id="update-profile-button" type="submit" class="btn btn-dark btn-lg">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var vehicleSelect = document.getElementById("vehicleSelect");  // Vehicle type selector
+        var vehicleSeatInput = document.getElementById("vehicleType"); // Vehicle seat dropdown
+
+        function toggleVehicleSeat() {
+            // If "Car" is selected, enable the vehicle seat dropdown
+            if (vehicleSelect.value.toLowerCase() === "car") {
+                vehicleSeatInput.disabled = false;
+            } else {
+                vehicleSeatInput.disabled = true;
+                vehicleSeatInput.value = ""; // Reset the value if "Motorcycle" or other vehicle is selected
+            }
+        }
+
+        // Run the function initially to set the correct state
+        toggleVehicleSeat();
+
+        // Add event listener to detect changes in vehicle type selection
+        if (vehicleSelect && vehicleSeatInput) {
+            vehicleSelect.addEventListener("change", toggleVehicleSeat);
+        }
+    });
+</script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
