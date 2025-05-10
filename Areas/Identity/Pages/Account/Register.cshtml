@@ -107,9 +107,22 @@
                         </div>
                     </div>
 
+                    <!-- Terms and Conditions Checkbox -->
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="termsCheckPass" required>
+                            <label class="form-check-label" for="termsCheck">
+                                <p>
+                                    I have read and agree to the
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#termsandconModalPass">Terms and Conditions</a>.
+                                </p>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Submit Button (Full width) -->
                     <div class="col-md-12 text-center">
-                        <button id="registerSubmit" type="submit" class="btn btn-dark btn-lg mt-3 w-100 hover-dark">Sign Up</button>
+                        <button id="registerSubmit" type="submit" class="btn btn-dark btn-lg mt-3 w-100 hover-dark" disabled>Sign Up</button>
                     </div>
                 </div>
             </form>
@@ -120,67 +133,112 @@
 </div>
 
 
-
-@* <!-- OTP Modal -->
-<div class="modal fade" id="chooseOtpModal" tabindex="-1" aria-labelledby="OTPModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+<!-- Terms and Condition  -->
+<div class="modal fade" id="termsandconModalPass" tabindex="-1" aria-labelledby="termsandcon" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="chooseOtpModal">Enter the OTP</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="chooseOptionModalLabel">Terms and Conditions</h5>
             </div>
 
             <div class="modal-body">
-                <div class="container text-center">
-                    <div class="row justify-content-center">
-                        <!-- OTP Verification -->
-                        <div class="col-md-6 mb-4">
-                            <div class="form-floating">
-                                <div class="d-flex justify-content-between">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp1" required style="width: 50px; height: 50px; font-size: 24px;">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp2" required style="width: 50px; height: 50px; font-size: 24px;">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp3" required style="width: 50px; height: 50px; font-size: 24px;">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp4" required style="width: 50px; height: 50px; font-size: 24px;">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp5" required style="width: 50px; height: 50px; font-size: 24px;">
-                                    <input type="text" class="form-control text-center mx-1 otp-input" maxlength="1" name="otp6" required style="width: 50px; height: 50px; font-size: 24px;">
-                                </div>
-                            </div>
-                            <div class="form-text text-muted small mt-2 text-center">
-                                Please enter the 6-digit code sent to your contact number.
-                            </div>
+                <div class="container">
+                    <div class="modal-body">
+                        <h6>1. Introduction</h6>
+                        <p>By registering as a passenger on our ride-hailing platform, you agree to the following Terms and Conditions. If you do not agree with these terms, please do not use our services.</p>
+
+                        <h6>2. Eligibility</h6>
+                        <ul>
+                            <li>Be at least 18 years of age or have the consent of a parent or legal guardian.</li>
+                            <li>Provide accurate and up-to-date personal information during registration.</li>
+                        </ul>
+
+                        <h6>3. Account Responsibility</h6>
+                        <ul>
+                            <li>You are responsible for maintaining the confidentiality of your account credentials.</li>
+                            <li>Do not share your account with others or allow unauthorized access.</li>
+                            <li>You are accountable for all activities conducted under your account.</li>
+                        </ul>
+
+                        <h6>4. Booking and Ride Conduct</h6>
+                        <p>By using the platform to book rides, you agree to:</p>
+                        <ul>
+                            <li>Be respectful to drivers and follow appropriate conduct during rides.</li>
+                            <li>Provide accurate pickup and drop-off details.</li>
+                            <li>Refrain from any abusive, inappropriate, or illegal behavior during a ride.</li>
+                        </ul>
+
+                        <h6>5. Fare and Payments</h6>
+                        <ul>
+                            <li>All fares are calculated based on distance, time, and applicable platform fees.</li>
+                            <li>You agree to pay the fare as shown before or after a trip.</li>
+                            <li>Additional charges may apply (e.g., waiting time, cancellations, etc.).</li>
+                            <li>All payments are to be made through the approved payment methods provided by the platform.</li>
+                        </ul>
+
+                        <h6>6. Cancellation Policy</h6>
+                        <p>You may cancel a ride under the conditions defined by the platform.</p>
+
+                        <h6>7. Safety and Security</h6>
+                        <ul>
+                            <li>Always verify driver and vehicle details before starting your ride.</li>
+                            <li>Report any suspicious or inappropriate behavior via the platform’s support channels.</li>
+                        </ul>
+
+                        <h6>8. Prohibited Activities</h6>
+                        <ul>
+                            <li>Using the platform for illegal or fraudulent purposes.</li>
+                            <li>Harassing, threatening, or harming drivers or other users.</li>
+                            <li>Creating multiple accounts to misuse promotions or referrals.</li>
+                        </ul>
+
+                        <h6>9. Termination</h6>
+                        <p>The platform may suspend or terminate your access for reasons including but not limited to:</p>
+                        <ul>
+                            <li>Violation of any of these Terms and Conditions.</li>
+                            <li>Misuse or abuse of the platform or its services.</li>
+                            <li>Fraudulent activity or providing false information.</li>
+                        </ul>
+
+                        <h6>10. Indemnification</h6>
+                        <p>You agree to indemnify and hold harmless the platform and its affiliates from any claims, losses, or damages arising from your misuse of the platform or violation of these terms.</p>
+
+                        <h6>11. Limitation of Liability</h6>
+                        <p>The platform is not liable for any indirect, incidental, or consequential damages arising from your use of the platform, except where prohibited by law.</p>
+
+                        <h6>12. Privacy and Data Use</h6>
+                        <p>By using the platform, you consent to the collection and use of your personal data as described in the platform’s Privacy Policy. Your data is used to facilitate bookings, process payments, and ensure platform security.</p>
+
+                        <h6>13. Changes to Terms</h6>
+                        <p>We may update these Terms and Conditions at any time. Continued use of the platform signifies your acceptance of the revised terms.</p>
+
+                        <h6>14. Governing Law</h6>
+                        <p>These terms shall be governed by the laws of the jurisdiction in which the platform operates.</p>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">I Accept</button>
                         </div>
                     </div>
-                </div>
-                <!-- Submit Button -->
-                <div class="text-center mt-3">
-                    <button class="btn btn-dark btn-lg w-100">Verify OTP</button>
                 </div>
             </div>
         </div>
     </div>
-</div> *@
+</div>
 
-@* <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const inputs = document.querySelectorAll('.otp-input');
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                if (input.value.length === 1 && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-            });
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === "Backspace" && input.value === "" && index > 0) {
-                    inputs[index - 1].focus();
-                }
-            });
-        });
-    });
-</script> *@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById('termsCheckPass');
+        const regbtn = document.getElementById('registerSubmit');
+
+        checkbox.addEventListener('change', function () {
+            regbtn.disabled = !this.checked;
+        });
+    });
+</script>
 
 <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>

@@ -40,9 +40,12 @@
 
                 <!-- Password -->
                 <div class="form-floating input-wrapper mb-4">
-                    <input asp-for="Input.Password" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" autocomplete="current-password" aria-required="true" placeholder="password" />
+                        <input asp-for="Input.Password" class="form-control border-0 border-bottom rounded-0 shadow-none input-line" autocomplete="current-password" aria-required="true" id="passwordField" placeholder="password" />
                     <label asp-for="Input.Password" class="form-label">Password</label>
                     <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        <span class="position-absolute end-0 top-50 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePasswordVisibility()">
+                            <i id="togglePasswordIcon" class="bi bi-eye-slash"></i>
+                        </span>
                 </div>
 
                 <!-- Remember Me -->
@@ -68,5 +71,23 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById("passwordField");
+        const toggleIcon = document.getElementById("togglePasswordIcon");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.classList.remove("bi-eye-slash");
+            toggleIcon.classList.add("bi-eye");
+        } else {
+            passwordField.type = "password";
+            toggleIcon.classList.remove("bi-eye");
+            toggleIcon.classList.add("bi-eye-slash");
+        }
+    }
+</script>
+
 
 <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>
