@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\uploads\drivers\" />
     <Folder Include="wwwroot\uploads\profilephotos\" />
   </ItemGroup>
 

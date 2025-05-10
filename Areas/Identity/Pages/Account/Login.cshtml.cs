@@ -101,6 +101,10 @@ namespace IT15_Project.Areas.Identity.Pages.Account
                         {
                             return LocalRedirect("/Home/Index");
                         }
+                        else if (roles.Contains("Driver"))
+                        {
+                            return LocalRedirect("/Home/Driver");
+                        }
                     }
 
                     return LocalRedirect(returnUrl); // fallback

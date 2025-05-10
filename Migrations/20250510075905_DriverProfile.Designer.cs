@@ -4,6 +4,7 @@ using IT15_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IT15_Project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250510075905_DriverProfile")]
+    partial class DriverProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,10 +54,6 @@ namespace IT15_Project.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlateNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -196,25 +195,25 @@ namespace IT15_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5d2609b5-6138-4d10-bf6b-d48329283369",
+                            Id = "25e77c9f-a012-4606-86fc-9883db5122cf",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "430bc6a9-0368-4337-bccd-a8393a44f0cc",
+                            Id = "f89d20f2-358e-4588-a773-4501390958d2",
                             Name = "Passenger",
                             NormalizedName = "PASSENGER"
                         },
                         new
                         {
-                            Id = "ca521bee-a74a-4f1d-afc4-2cbaba95ed71",
+                            Id = "a40cd0be-ebc9-4bae-b359-501480c4d115",
                             Name = "Driver",
                             NormalizedName = "DRIVER"
                         },
                         new
                         {
-                            Id = "5f074e24-4c3c-4fb5-b593-1b9440acb548",
+                            Id = "cf12b45e-f321-4a8d-80cf-930ba097cf40",
                             Name = "Staff",
                             NormalizedName = "STAFF"
                         });

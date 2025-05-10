@@ -11,10 +11,21 @@ namespace IT15_Project.Data
             : base(options)
         {
         }
+
+        public DbSet<Driver> Drivers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            // One-to-one config
+            builder.Entity<ApplicationUser>()
+                .HasOne(a => a.DriverProfile)
+                .WithOne(d => d.ApplicationUser)
+                .HasForeignKey<Driver>(d => d.UserId);
+
+
+            //Roles
             var admin = new IdentityRole("Admin");
             admin.NormalizedName = "ADMIN";
 

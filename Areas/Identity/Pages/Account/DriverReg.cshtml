@@ -1,125 +1,165 @@
-﻿<div class="container-fluid py-5 animate-fade-in-up delay-1 bg-image">
+﻿@page
+@model IT15_Project.Areas.Identity.Pages.Account.DriverRegModel
+
+<div class="container-fluid py-5 animate-fade-in-up delay-1 bg-image">
     <div class="row align-items-center justify-content-center">
         <div class="col-lg-8 animate-fade-in">
-            <form class="border p-4 shadow-sm rounded bg-white">
+            <form asp-page-handler="RegisterDriver" method="post" enctype="multipart/form-data" class="border p-4 shadow-sm rounded bg-white">
                 <h4 class="text-center mb-4">Become a Driver</h4>
-
                 <div class="row g-3">
                     <!-- First Name -->
                     <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
-                            <label for="firstName">First Name</label>
+                            <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" required />
+                            <label asp-for="Input.FirstName">First Name</label>
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                         </div>
                     </div>
 
                     <!-- Middle Name -->
                     <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="middleName" placeholder="Middle Name">
-                            <label for="middleName">Middle Name (optional)</label>
+                            <input asp-for="Input.MiddleName" class="form-control" placeholder="Middle Name" />
+                            <label asp-for="Input.MiddleName">Middle Name (optional)</label>
                         </div>
                     </div>
 
                     <!-- Last Name -->
                     <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
-                            <label for="lastName">Last Name</label>
+                            <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" required />
+                            <label asp-for="Input.LastName">Last Name</label>
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Phone Number -->
+                    <!-- Phone -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="phone" placeholder="09123456789" required>
-                            <label for="phone">Phone Number</label>
+                            <input asp-for="Input.PhoneNumber" class="form-control" placeholder="09123456789" required />
+                            <label asp-for="Input.PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Input.Address" class="form-control" placeholder="you@example.com" required />
+                            <label asp-for="Input.Address">Address</label>
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
                         </div>
                     </div>
 
                     <!-- Email -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
-                            <label for="email">Email Address</label>
+                            <input asp-for="Input.Email" class="form-control" placeholder="you@example.com" required />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
+                    </div>
+
+                    <!-- Profile Photo -->
+                    <div class="col-md-6">
+                        <label class="form-label">Profile Photo (optional)</label>
+                        <input asp-for="Input.ProfilePhoto" type="file" class="form-control" />
                     </div>
 
                     <!-- Password -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" placeholder="Password" autocomplete="new-password" required />
-                            <label>Password</label>
+                            <input asp-for="Input.Password" class="form-control" type="password" placeholder="Password" autocomplete="new-password" required />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
                     </div>
 
                     <!-- Confirm Password -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input class="form-control" placeholder="Confirm Password" autocomplete="new-password" required />
-                            <label>Confirm Password</label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" placeholder="Confirm Password" autocomplete="new-password" required />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Vehicle Type Selection -->
+                    <!-- Vehicle Type -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select" id="vehicleSelect" required>
+                            <select asp-for="Input.VehicleType" class="form-select" id="vehicleSelect" required>
                                 <option selected disabled>Select Vehicle Type</option>
                                 <option value="car">Car</option>
                                 <option value="motor">Motorcycle</option>
                             </select>
-                            <label for="vehicleSelect">Vehicle Type</label>
+                            <label asp-for="Input.VehicleType">Vehicle Type</label>
+                            <span asp-validation-for="Input.VehicleType" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Vehicle Seat Type (Only show if Car selected) -->
-                    <div class="col-md-6" id="vehicleSeatDiv" style="display: none;">
+                    <!-- Vehicle Seat Type -->
+                    <div class="col-md-6" id="vehicleSeatDiv">
                         <div class="form-floating">
-                            <select class="form-select" id="vehicleType" required>
+                            <select asp-for="Input.VehicleSeat" class="form-select" id="vehicleType" disabled>
                                 <option selected disabled>Select a Seat Type</option>
                                 <option>4-seater</option>
                                 <option>6-seater</option>
                             </select>
-                            <label for="vehicleType">Vehicle Seat</label>
+                            <label asp-for="Input.VehicleSeat">Vehicle Seat</label>
                         </div>
                     </div>
 
                     <!-- Vehicle Model -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="vehicleModel" placeholder="e.g. Toyota Vios 2022" required>
-                            <label for="vehicleModel">Vehicle Model</label>
+                            <input asp-for="Input.VehicleModel" class="form-control" placeholder="e.g. Toyota Vios" required />
+                            <label asp-for="Input.VehicleModel">Vehicle Model</label>
+                            <span asp-validation-for="Input.VehicleModel" class="text-danger"></span>
                         </div>
                     </div>
 
                     <!-- Plate Number -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="plateNumber" placeholder="e.g. ABC-1234" required>
-                            <label for="plateNumber">Plate Number</label>
+                            <input asp-for="Input.PlateNumber" class="form-control" placeholder="e.g. ABC-1234" required />
+                            <label asp-for="Input.PlateNumber">Plate Number</label>
+                            <span asp-validation-for="Input.PlateNumber" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Driver's License Upload -->
+                    <!-- File Uploads -->
                     <div class="col-md-6">
-                        <label class="form-label">Upload Driver's License</label>
-                        <input type="file" class="form-control" id="licenseUpload" required>
+                        <label>Driver's License</label>
+                        <input asp-for="Input.DriverLicense" type="file" class="form-control" />
+                        <span asp-validation-for="Input.DriverLicense" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label>CR (Certificate of Registration)</label>
+                        <input asp-for="Input.CertificateRegistration" type="file" class="form-control" />
+                        <span asp-validation-for="Input.CertificateRegistration" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label>OR (Official Receipt)</label>
+                        <input asp-for="Input.OfficialReceipt" type="file" class="form-control" />
+                        <span asp-validation-for="Input.OfficialReceipt" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label>NBI Clearance</label>
+                        <input asp-for="Input.NBIClearance" type="file" class="form-control" />
+                        <span asp-validation-for="Input.NBIClearance" class="text-danger"></span>
                     </div>
 
-                    <!-- Vehicle Registration Upload -->
-                    <div class="col-md-6">
-                        <label class="form-label">Upload Vehicle Registration</label>
-                        <input type="file" class="form-control" id="registrationUpload" required>
-                    </div>
-
-                    <!-- Motivation Textarea -->
+                    <!-- Motivation -->
                     <div class="col-12">
-                        <label class="form-label">Why do you want to drive with us?</label>
-                        <textarea class="form-control" rows="3" placeholder="Tell us briefly..." required></textarea>
+                        <label asp-for="Input.Motivation" class="form-label">Why do you want to drive with us?</label>
+                        <textarea asp-for="Input.Motivation" class="form-control" rows="3" placeholder="Tell us briefly..." required></textarea>
+                        <span asp-validation-for="Input.Motivation" class="text-danger"></span>
                     </div>
 
-                    <!-- Terms and Conditions Checkbox -->
+                    <!-- Terms and Conditions -->
+                    <input type="hidden" asp-for="Input.Status" />
+
+                    <!-- Terms and Conditions -->
                     <div class="col-12">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="termsCheck" required>
@@ -134,16 +174,16 @@
 
                     <!-- Submit Button -->
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-dark hover-dark btn-lg mt-3 px-5" id="submitBtn" data-bs-toggle="modal" data-bs-target="#notificationModal" disabled>
+                        <button type="submit" class="btn btn-dark hover-dark btn-lg mt-3 px-5" id="submitBtn" disabled>
                             Submit Application
                         </button>
                     </div>
-
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="termsandconModal" tabindex="-1" aria-labelledby="termsandcon" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -259,16 +299,30 @@
     });
 </script>
 
-<!-- Add JavaScript to toggle vehicle seat selection based on vehicle type -->
+
 <script>
-    document.getElementById("vehicleSelect").addEventListener("change", function () {
-        var vehicleType = this.value;
-        var vehicleSeatDiv = document.getElementById("vehicleSeatDiv");
-        if (vehicleType === "car") {
-            vehicleSeatDiv.style.display = "block"; // Show the Vehicle Seat dropdown for cars
-        } else {
-            vehicleSeatDiv.style.display = "none"; // Hide the Vehicle Seat dropdown for motorcycles
+    document.addEventListener("DOMContentLoaded", function () {
+        var vehicleSelect = document.getElementById("vehicleSelect");  // Vehicle type selector
+        var vehicleSeatInput = document.getElementById("vehicleType"); // Vehicle seat dropdown
+
+        function toggleVehicleSeat() {
+            // If "Car" is selected, enable the vehicle seat dropdown
+            if (vehicleSelect.value.toLowerCase() === "car") {
+                vehicleSeatInput.disabled = false;
+            } else {
+                vehicleSeatInput.disabled = true;
+                vehicleSeatInput.value = ""; // Reset the value if "Motorcycle" or other vehicle is selected
+            }
+        }
+
+        // Run the function initially to set the correct state
+        toggleVehicleSeat();
+
+        // Add event listener to detect changes in vehicle type selection
+        if (vehicleSelect && vehicleSeatInput) {
+            vehicleSelect.addEventListener("change", toggleVehicleSeat);
         }
     });
 </script>
+
 

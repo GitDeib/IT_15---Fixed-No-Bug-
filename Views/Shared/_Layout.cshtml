@@ -53,6 +53,14 @@
                         <span class="ms-2" style="font-family: 'Poppins', sans-serif; font-weight: 600;">SundoGo</span>
                     </a>
                 }
+                else if (roles.Contains("Driver"))
+                {
+                    <!-- Brand Logo -->
+                    <a class="navbar-brand text-white d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Driver">
+                        <img src="~/lib/lg.jpg" alt="Rider Logo" style="height: 60px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 0 8px #000000;" />
+                        <span class="ms-2" style="font-family: 'Poppins', sans-serif; font-weight: 600;">SundoGo</span>
+                    </a>
+                }
                 else
                 {
                         <p>No roles</p>

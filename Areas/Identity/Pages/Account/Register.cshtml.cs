@@ -199,20 +199,29 @@ namespace IT15_Project.Areas.Identity.Pages.Account
                       <head></head>
                       <body style='font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0;'>
                         <div style='display: flex; justify-content: center; align-items: center; min-height: 100vh;'>
-                          <div style='max-width: 600px; margin: 20px auto; padding: 40px; background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;'>
-                            <h2 style='color: #343a40;'>Welcome to Our Service!</h2>
-                            <h1 style='color: #212529;'>{emailTitle}</h1>
-                            <hr style='margin: 20px 0;'/>
-                            <p style='font-size: 16px; color: #495057;'>Please confirm your account by clicking the button below:</p>
-                            <a href='{HtmlEncoder.Default.Encode(callbackUrl)}' 
-                               style='display: inline-block; padding: 12px 24px; background-color: #343a40; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold;'>
-                              Confirm Your Email
-                            </a>
+                          <div style='max-width: 600px; margin: 20px auto; padding: 40px; background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: left;'>
+                            <h2 style='color: #343a40;'>Welcome to Our Ride Service!</h2>
+                            <p style='font-size: 16px; color: #495057;'>Dear {Input.FirstName},</p>
+                            <p style='font-size: 16px; color: #495057;'>
+                              We're excited to have you on board as a passenger. With our service, you can easily book rides, enjoy smooth travel experiences, and connect with trusted drivers.
+                            </p>
+                            <p style='font-size: 16px; color: #495057;'>
+                              To start using your account, please confirm your email by clicking the button below:
+                            </p>
+                            <div style='text-align: center; margin: 30px 0;'>
+                              <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'
+                                 style='display: inline-block; padding: 12px 24px; background-color: #343a40; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold;'>
+                                Confirm Your Email
+                              </a>
+                            </div>
+                            <p style='font-size: 14px; color: #868e96;'>If you did not sign up for this service, you can safely ignore this email.</p>
+                            <p style='font-size: 14px; color: #868e96;'>— The Ride Service Team</p>
                           </div>
                         </div>
                       </body>
                     </html>
                     ");
+
 
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)

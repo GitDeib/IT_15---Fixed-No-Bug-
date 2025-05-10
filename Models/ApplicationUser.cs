@@ -14,8 +14,11 @@ namespace IT15_Project.Models
 
         public string? ProfilePhotoPath { get; set; } 
 
-        public DateTime CreatedAt { get; set; } 
+        public DateTime CreatedAt { get; set; }
 
+        
+        // Navigation: One-to-One with Driver
+        public virtual Driver DriverProfile { get; set; }
 
     }
 }
