@@ -61,11 +61,23 @@
                         </div>
                     </div>
 
-                    <!-- Vehicle Type -->
+                    <!-- Vehicle Type Selection -->
                     <div class="col-md-6">
                         <div class="form-floating">
+                            <select class="form-select" id="vehicleSelect" required>
+                                <option selected disabled>Select Vehicle Type</option>
+                                <option value="car">Car</option>
+                                <option value="motor">Motorcycle</option>
+                            </select>
+                            <label for="vehicleSelect">Vehicle Type</label>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Seat Type (Only show if Car selected) -->
+                    <div class="col-md-6" id="vehicleSeatDiv" style="display: none;">
+                        <div class="form-floating">
                             <select class="form-select" id="vehicleType" required>
-                                <option selected disabled>Select a type</option>
+                                <option selected disabled>Select a Seat Type</option>
                                 <option>4-seater</option>
                                 <option>6-seater</option>
                             </select>
@@ -132,8 +144,6 @@
         </div>
     </div>
 </div>
-
-
 
 <div class="modal fade" id="termsandconModal" tabindex="-1" aria-labelledby="termsandcon" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -246,6 +256,19 @@
         checkbox.addEventListener('change', function () {
             submitBtn.disabled = !this.checked;
         });
+    });
+</script>
+
+<!-- Add JavaScript to toggle vehicle seat selection based on vehicle type -->
+<script>
+    document.getElementById("vehicleSelect").addEventListener("change", function () {
+        var vehicleType = this.value;
+        var vehicleSeatDiv = document.getElementById("vehicleSeatDiv");
+        if (vehicleType === "car") {
+            vehicleSeatDiv.style.display = "block"; // Show the Vehicle Seat dropdown for cars
+        } else {
+            vehicleSeatDiv.style.display = "none"; // Hide the Vehicle Seat dropdown for motorcycles
+        }
     });
 </script>
 
