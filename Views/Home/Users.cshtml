@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Admin")]
 
+@model IT15_Project.Models.UserManagementViewModel
+
+
 <div class="container-fluid">
     <h1 class="mt-4">User Management</h1>
 
@@ -22,16 +25,18 @@
         </ul>
 
         <!-- Search Bar and Filter Dropdown Grouped on the Right -->
-        <div class="d-flex">
-            <input type="text" class="form-control w-auto ms-4" placeholder="Search...">
-            <select class="form-select w-auto ms-2">
-                <option selected>Filter: Status</option>
-                <option value="">Active</option>
-                <option value="">Pending</option>
-                <option value="">Inactive</option>
-                <option value="">Suspend</option>
+        <div class="d-flex mb-3">
+            <input type="text" id="searchInput" class="form-control w-auto ms-4" placeholder="Search...">
+            <select id="statusFilter" class="form-select w-auto ms-2">
+                <option value="">All Statuses</option>
+                <option value="Verified">Verified</option>
+                <option value="Not Verified">Not Verified</option>
+                <option value="Banned">Banned</option>
+                <option value="Email Confirmed">Email Confirmed</option>
+                <option value="Email Not Confirmed">Email Not Confirmed</option>
             </select>
         </div>
+
     </div>
 
 
@@ -44,36 +49,209 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-primary">
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
-                            <th>License No.</th>
-                            <th>Phone</th>
+                            <th>Vehicle Type</th>
+                            <th>Vehicle Seat</th>
+                            <th>Vehicle Model</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var driver in Model.Drivers)
+                        {
+                            var user = driver.ApplicationUser;
+                            var profilePath = string.IsNullOrEmpty(user?.ProfilePhotoPath)
+                            ? Url.Content("~/lib/women.jpg")
+                            : Url.Content("~/uploads/profilephotos/" + user.ProfilePhotoPath);
+
+                            var modalId = "viewDriverModal_" + driver.Id;
+
+                            var approveModalId = "verifyModal-" + driver.Id;
+
+                            string status = driver.Status ?? "Unknown";  // Driver status
+
+                            string statusClass = status switch
+                            {
+                                "Verified" => "text-success",
+                                "Not Verified" => "text-warning",
+                                "Banned" => "bg-danger text-white",
+                                _ => "bg-secondary text-white"
+                            };
+
                         <tr>
-                           <td class="fw-bold">1</td>
                             <td class="d-flex align-items-center">
-                                <img src="~/lib/women.jpg" alt="carlos" class="rounded-circle border border-3 border-success me-2" width="50" height="50">
+                                        <img src="@profilePath"
+                                         alt="@($"{user?.FirstName} {user?.LastName}")"
+                                         class="rounded-circle border border-3 border-dark me-2" width="50" height="50">
                                 <div>
-                                    <div>Juan Dela Cruz</div>
-                                    <button class="btn btn-sm hover-dark" data-bs-toggle="modal" data-bs-target="#viewProfileModal" title="View Profile">
-                                        <i class="bi bi-eye"></i> View Profile
-                                    </button>
+                                        <div>@($"{user?.FirstName} {user?.MiddleName} {user?.LastName}")</div>
+                                        <button class="btn btn-sm hover-dark"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#@modalId"
+                                                title="View Profile">
+                                            <i class="bi bi-eye"></i> View Profile
+                                        </button>
                                 </div>
                             </td>
-                            <td>DR123456</td>
-                            <td>09123456789</td>
-                            <td><span class="badge bg-success">Active</span></td>
+                                <td>@driver.VehicleType</td>
+                                <td>@driver.VehicleSeat</td>
+                                <td>@driver.VehicleModel</td>
+                                <td class="@statusClass">@driver.Status</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editStatusModal" title="Edit Status">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
+                                    <button class="btn btn-sm btn-outline-success"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#verifyModal-@driver.Id"
+                                            title="Approve/Reject"
+                                        @(driver.Status == "Verified" ? "disabled" : "")>
+                                        <i class="bi bi-check-circle"></i> Approve/Reject
+                                    </button>
                             </td>
                         </tr>
-                        <!-- More drivers here -->
+
+                            <!-- Driver Profile Modal -->
+                            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@($"{modalId}_Label")" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="@($"{modalId}_Label")">Driver Profile</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <!-- Modal Body -->
+                                        <div class="modal-body">
+                                            <form>
+                                                <!-- Driver Photo -->
+                                                <div class="d-flex justify-content-center mb-3">
+                                                    <img src="@Url.Content(string.IsNullOrEmpty(@profilePath)
+                                                        ? "~/lib/default-driver.jpg"
+                                                        : @profilePath)"
+                                                         alt="Driver Photo"
+                                                         class="rounded-circle border border-3 border-dark"
+                                                         width="190" height="190">
+                                                </div>
+
+                                                <!-- Driver Personal Details -->
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label class="form-label">First Name</label>
+                                                        <input type="text" class="form-control" value="@user.FirstName" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Middle Name</label>
+                                                        <input type="text" class="form-control" value="@user.MiddleName" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Last Name</label>
+                                                        <input type="text" class="form-control" value="@user.LastName" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Driver Contact Details -->
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label class="form-label">Email</label>
+                                                        <input type="email" class="form-control" value="@user.Email" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Phone Number</label>
+                                                        <input type="tel" class="form-control" value="@user.PhoneNumber" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Driver Address -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Address</label>
+                                                    <textarea class="form-control" readonly>@user.Address</textarea>
+                                                </div>
+
+                                                <!-- Vehicle Details -->
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label class="form-label">Vehicle Type</label>
+                                                        <input type="text" class="form-control" value="@driver.VehicleType" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Vehicle Seats</label>
+                                                        <input type="text" class="form-control" value="@driver.VehicleSeat" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Vehicle Model</label>
+                                                        <input type="text" class="form-control" value="@driver.VehicleModel" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Plate Number</label>
+                                                        <input type="text" class="form-control" value="@driver.PlateNumber" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Driver Documents -->
+                                                <div class="mb-3">
+                                                    <h5 class="text-center">Driver Documents</h5>
+                                                    <div class="row justify-content-center">
+                                                        <!-- Driver License -->
+                                                        <div class="col-md-3 d-flex flex-column align-items-center mb-3">
+                                                            <label class="form-label">Driver License</label>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.DriverLicense)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View License</a>
+                                                        </div>
+                                                        <!-- Certificate of Registration -->
+                                                        <div class="col-md-3 d-flex flex-column align-items-center mb-3">
+                                                            <label class="form-label">Certificate Registration</label>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.CertificateRegistration)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View Certificate</a>
+                                                        </div>
+                                                        <!-- Official Receipt -->
+                                                        <div class="col-md-3 d-flex flex-column align-items-center mb-3">
+                                                            <label class="form-label">Official Receipt</label>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.OfficialReceipt)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View Receipt</a>
+                                                        </div>
+                                                        <!-- NBI Clearance -->
+                                                        <div class="col-md-3 d-flex flex-column align-items-center mb-3">
+                                                            <label class="form-label">NBI Clearance</label>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.NBIClearance)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View NBI</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- Modal Footer -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Approval or Reject Modal -->
+                            <div class="modal fade" id="verifyModal-@driver.Id" tabindex="-1" aria-labelledby="verifyModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form asp-action="ApproveDriver" method="post">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Verify Driver</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to approve or reject <strong>@($"{user?.FirstName} {user?.LastName}")</strong>?</p>
+                                                <div class="mb-3">
+                                                    <label for="RejectionReason" class="form-label">Rejection Reason (if any)</label>
+                                                    <textarea class="form-control" name="RejectionReason"></textarea>
+                                                </div>
+
+                                                <!-- Hidden inputs -->
+                                                <input type="hidden" name="DriverId" value="@driver.Id" />
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="submit" name="action" value="Reject" class="btn btn-danger">Reject</button>
+                                                <button type="submit" name="action" value="Approve" class="btn btn-success">Approve</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
                     </tbody>
                 </table>
             </div>
@@ -85,39 +263,149 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-warning">
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            <th>Registered On</th>
+                            <th>Registed At</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var passenger in Model.Passengers)
+                        {
+                            var profilePath = string.IsNullOrEmpty(passenger.ProfilePhotoPath)
+                            ? Url.Content("~/lib/women.jpg")
+                            : Url.Content("~/uploads/profilephotos/" + passenger.ProfilePhotoPath);
+
+                            var modalId = "viewProfileModal_" + passenger.Id; // Ensure unique ID per modal
+
+                            string emailStatus = passenger.EmailConfirmed ? "Email Confirmed" : "Email Not Confirmed";  // Email confirmation status
+
+                            string emailStatusClass = emailStatus switch
+                            {
+                                "Email Confirmed" => "text-success",
+                                "Email Not Confirmed" => "text-warning",
+                                _ => "bg-secondary text-white"
+                            };
+
                         <tr>
-                            <td class="fw-bold">1</td>
                              <td class="d-flex align-items-center">
-                                <img src="~/lib/women.jpg" alt="carlos" class="rounded-circle border border-3 border-success me-2" width="50" height="50">
-                                <div>
-                                    <div>Juan Dela Cruz</div>
-                                    <button class="btn btn-sm hover-dark" data-bs-toggle="modal" data-bs-target="#viewProfileModal" title="View Profile">
-                                        <i class="bi bi-eye"></i> View Profile
+                                    <img src="@profilePath"
+                                         alt="@($"{passenger?.FirstName} {passenger?.LastName}")"
+                                     class="rounded-circle border border-3 border-dark me-2" width="50" height="50">
+                                    <div>
+                                        <div>@($"{passenger.FirstName} {passenger.MiddleName} {passenger.LastName}")</div>
+                                        <button class="btn btn-sm hover-dark"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#@modalId"
+                                                title="View Profile">
+                                            <i class="bi bi-eye"></i> View Profile
+                                        </button>
+                                    </div>
+                            </td>
+                            <td>@passenger.Email</td>
+                            <td>@passenger.PhoneNumber</td>
+                            <td>@passenger.CreatedAt</td>
+                                <td class="@emailStatusClass">
+                                    @(passenger.EmailConfirmed ? "Email Confirmed" : "Email Not Confirmed")
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmDeleteModal-@passenger.Id"
+                                            title="Delete Account"
+                                    @(passenger.EmailConfirmed ? "disabled" : "")>
+                                        <i class="bi bi-trash"></i>
                                     </button>
-                                </div>
-                            </td>
-                            <td>carlos@example.com</td>
-                            <td>09981234567</td>
-                            <td>2025-01-15</td>
-                            <td><span class="badge bg-warning">Pending</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#approveRejectModal" title="Approve/Reject">
-                                    <i class="bi bi-check-circle"></i> Approve/Reject
-                                </button>
-                            </td>
+                                </td>
                         </tr>
-                        <!-- More passengers here -->
-                        
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="confirmDeleteModal-@passenger.Id" tabindex="-1" aria-labelledby="confirmDeleteLabel-@passenger.Id" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="confirmDeleteLabel-@passenger.Id">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this account?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" asp-controller="Home" asp-action="DeleteUser">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@passenger.Id" />
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Profile View passenger -->
+                            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@($"{modalId}_Label")" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="@($"{modalId}_Label")">Profile Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form>
+                                                <div class="d-flex justify-content-center mb-4">
+                                                    <img src="@Url.Content(string.IsNullOrEmpty(passenger.ProfilePhotoPath)
+                                                        ? "~/lib/women.jpg"
+                                                        : "~/uploads/profilephotos/" + passenger.ProfilePhotoPath)"
+                                                         alt="profile"
+                                                         class="rounded-circle border border-3 border-dark"
+                                                         width="190" height="190">
+                                                </div>
+
+                                                <!-- Row 1: Full Name (First, Middle, Last) -->
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label class="form-label">First Name</label>
+                                                        <input type="text" class="form-control" value="@passenger.FirstName" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Middle Name</label>
+                                                        <input type="text" class="form-control" value="@passenger.MiddleName" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Last Name</label>
+                                                        <input type="text" class="form-control" value="@passenger.LastName" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 2: Email and Phone -->
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label class="form-label">Email</label>
+                                                        <input type="email" class="form-control" value="@passenger.Email" readonly>
+                                                    </div>
+                                                    <div class="col">
+                                                        <label class="form-label">Phone</label>
+                                                        <input type="tel" class="form-control" value="@passenger.PhoneNumber" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Row 3: Address -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Address</label>
+                                                    <textarea class="form-control" rows="2" readonly>@passenger.Address</textarea>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }                        
                     </tbody>
                 </table>
             </div>
@@ -164,90 +452,28 @@
 </div>
 
 
-<!-- Edit Status Modal -->
-<div class="modal fade" id="editStatusModal" tabindex="-1" aria-labelledby="editStatusModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editStatusModalLabel">Edit Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editStatusForm">
-                    <div class="d-flex justify-content-center mb-3">
-                        <img src="~/lib/man.webp" alt="carlos" class="rounded-circle border border-3 border-success" width="100" height="100">
-                    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
 
-                    <div class="mb-3">
-                        <label for="profileName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="profileName" value="Carlos Reyes" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="profileEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="profileEmail" value="carlos@example.com" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="profilePhone" class="form-label">Phone</label>
-                        <input type="tel" class="form-control" id="profilePhone" value="09981234567" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="statusSelect" class="form-label">Status</label>
-                        <select class="form-select" id="statusSelect">
-                            <option selected>Filter: Status</option>
-                            <option value="active">Active</option>
-                            <option value="pending">Pending</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="suspend">Suspend</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
+        function filterTable() {
+            const searchValue = searchInput.value.toLowerCase();
+            const filterValue = statusFilter.value.toLowerCase();
+            const rows = document.querySelectorAll('table tbody tr');
 
-<!-- Approve/Reject Modal -->
-<div class="modal fade" id="approveRejectModal" tabindex="-1" aria-labelledby="approveRejectModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="approveRejectModalLabel">Approve/Reject Application</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="rejectionReason" class="form-label">Rejection Reason (if applicable)</label>
-                        <textarea class="form-control" id="rejectionReason" rows="3" placeholder="Provide a reason if rejecting"></textarea>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-success">Approve</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#rejectionReasonModal">Reject</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                const status = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase(); // Adjust column index as needed
 
-<!-- Rejection Reason Modal -->
-<div class="modal fade" id="rejectionReasonModal" tabindex="-1" aria-labelledby="rejectionReasonModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="rejectionReasonModalLabel">Rejection Reason</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Your rejection reason has been submitted.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+                const matchesSearch = rowText.includes(searchValue);
+                const matchesFilter = !filterValue || status.includes(filterValue);
+
+                row.style.display = matchesSearch && matchesFilter ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+    });
+</script>

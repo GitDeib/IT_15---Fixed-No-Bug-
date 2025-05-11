@@ -154,7 +154,7 @@ namespace IT15_Project.Areas.Identity.Pages.Account
                     }
 
                     // Save relative path to database
-                    photoPath = $"/uploads/profilephotos/{fileName}";
+                    photoPath = fileName;
                 }
 
                 var user = new ApplicationUser()

@@ -13,7 +13,7 @@
             <div class="d-flex align-items-center justify-content-start">
                 <img src="~/lib/GIF/document.gif" alt="KM" style="width: 50px; height: 50px;">
                 <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">
-                    @(ViewData["PendingDriversCount"] ?? 0)
+                    @ViewBag.PendingDriversCount
                 </p>
             </div>
         </div>
@@ -44,7 +44,9 @@
             <h5 class="card-title">Available Drivers</h5>
             <div class="d-flex align-items-center justify-content-start">
                 <img src="~/lib/GIF/driver.gif" alt="KM" style="width: 50px; height: 50px;">
-                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">15</p>
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">
+                    @ViewBag.approvedDriversCount
+                </p>
             </div>
         </div>
     </div>

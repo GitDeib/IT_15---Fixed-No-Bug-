@@ -33,7 +33,6 @@ namespace IT15_Project.Views.Home
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public int PendingDriversCount { get; set; }
 
         public class InputModel
         {
@@ -41,10 +40,7 @@ namespace IT15_Project.Views.Home
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var pendingDriversCount = await _context.Drivers.CountAsync(d => d.Status == "Not Verified");
-
-            // Store the count in ViewData
-            ViewData["PendingDriversCount"] = pendingDriversCount;
+          
 
             return Page();
         }
