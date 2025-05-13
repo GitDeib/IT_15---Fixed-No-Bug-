@@ -66,8 +66,9 @@ function addPickupPin() {
         .setLngLat(center)
         .addTo(map)
         .on('dragend', () => {
+            const lngLat = pickupMarker.getLngLat();
+            reverseGeocode(lngLat, 'pickup');
             updateRoute();
-            reverseGeocode(center, 'pickup');
         });
     reverseGeocode(center, 'pickup');
 }
@@ -79,8 +80,9 @@ function addDropoffPin() {
         .setLngLat(center)
         .addTo(map)
         .on('dragend', () => {
+            const lngLat = dropoffMarker.getLngLat(); // ✅ Get updated location
+            reverseGeocode(lngLat, 'dropoff');
             updateRoute();
-            reverseGeocode(center, 'dropoff');
         });
     reverseGeocode(center, 'dropoff');
 }
@@ -103,14 +105,6 @@ directions.on('route', function (e) {
         document.getElementById('distanceDisplay').innerText = `${distanceKm} km`;
         document.getElementById('timeDisplay').innerText = `${durationMin} minutes`;
 
-        // Get the fare details from the DOM
-        const baseFare = parseFloat(document.getElementById('baseFare').textContent.replace('₱', '').trim());
-        const perKm = parseFloat(document.getElementById('perKm').textContent.replace('₱', '').split('/')[0].trim());
-        const perMin = parseFloat(document.getElementById('perMinute').textContent.replace('₱', '').split('/')[0].trim());
-
-        // Calculate the total fare
-        const totalFare = baseFare + (perKm * distanceKm) + (perMin * durationMin);
-
         // Display the total fare
         document.getElementById('totalFare').innerText = `₱${totalFare.toFixed(2)}`;
     }
@@ -124,53 +118,23 @@ function reverseGeocode(lngLat, type) {
         .then(data => {
             const address = data.features[0]?.place_name || 'Unknown';
             document.getElementById(type).value = address;
+
+            // Set display spans
+            if (type === 'pickup') {
+                document.getElementById('pickupLocationDisplay').innerText = address;
+                document.getElementById('pickupLat').innerText = lngLat.lat.toFixed(6);
+                document.getElementById('pickupLng').innerText = lngLat.lng.toFixed(6);
+            } else if (type === 'dropoff') {
+                document.getElementById('dropoffLocationDisplay').innerText = address;
+                document.getElementById('dropoffLat').innerText = lngLat.lat.toFixed(6);
+                document.getElementById('dropoffLng').innerText = lngLat.lng.toFixed(6);
+            }
+
+            checkIfReadyToProceed();
         })
         .catch(() => {
             document.getElementById(type).value = 'Error getting address';
         });
-}
-
-// Geocode when user types
-document.getElementById('pickup').addEventListener('change', () => {
-    geocodeAndSetMarker('pickup');
-});
-document.getElementById('dropoff').addEventListener('change', () => {
-    geocodeAndSetMarker('dropoff');
-});
-
-function geocodeAndSetMarker(type) {
-    const value = document.getElementById(type).value;
-    fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${accessToken}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.features.length > 0) {
-                const coords = data.features[0].center;
-                if (type === 'pickup') {
-                    if (pickupMarker) pickupMarker.remove();
-                    pickupMarker = new mapboxgl.Marker({ draggable: true, color: 'blue' })
-                        .setLngLat(coords)
-                        .addTo(map)
-                        .on('dragend', () => {
-                            reverseGeocode(pickupMarker.getLngLat(), 'pickup');
-                            updateRoute();
-                        });
-                } else {
-                    if (dropoffMarker) dropoffMarker.remove();
-                    dropoffMarker = new mapboxgl.Marker({ draggable: true, color: 'red' })
-                        .setLngLat(coords)
-                        .addTo(map)
-                        .on('dragend', () => {
-                            reverseGeocode(dropoffMarker.getLngLat(), 'dropoff');
-                            updateRoute();
-                        });
-                }
-                map.flyTo({ center: coords });
-                updateRoute();
-            } else {
-                alert("Location not found");
-            }
-        })
-        .catch(() => alert("Geocoding failed"));
 }
 
 // Create marker using Bootstrap badge and icon
@@ -180,20 +144,6 @@ function createUserMarker(lng, lat) {
         <div class="d-flex flex-column align-items-center">
             <span class="badge bg-dark mb-1">You're here</span>
             <div class="rounded-circle bg-primary border border-white" style="width: 20px; height: 20px;"></div>
-        </div>
-    `;
-    return new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
-}
-
-// Create driver marker (car icon)
-function createDriverMarker(lng, lat) {
-    const el = document.createElement('div');
-    el.innerHTML = `
-    <div class="d-flex flex-column align-items-center">
-            <span class="badge bg-dark mb-1">Your Driver</span>
-             <img src="/lib/sedan.png"
-             alt="Car Icon"
-             style="width: 50px; height: 50px;" />
         </div>
     `;
     return new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
@@ -234,3 +184,30 @@ if (navigator.geolocation) {
 } else {
     console.warn('Geolocation not supported by this browser.');
 }
+
+
+
+//Sidepass
+
+function checkIfReadyToProceed() {
+    const pickup = document.getElementById('pickup').value.trim();
+    const dropoff = document.getElementById('dropoff').value.trim();
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = !(pickup && dropoff);
+}
+
+
+// Function to open sidebar when conditions are met
+function openSidebar() {
+    const pickup = document.getElementById('pickup').value;
+    const dropoff = document.getElementById('dropoff').value;
+
+    if (pickup && dropoff) {
+        // Open the sidebar if both fields are filled
+        const sidebar = new bootstrap(document.getElementById('sidepass'));
+        sidebar.show();
+    }
+}
+
+// Attach click event to the "Next" button to trigger sidebar
+document.getElementById('nextBtn').addEventListener('click', openSidebar);

@@ -30,7 +30,7 @@
             <!-- Pickup and Dropoff Fields -->
             <div class="col-12 col-md-3 col-lg-3">
                 <div class="form-floating position-relative">
-                    <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup">
+                    <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup" readonly>
                     <label for="pickup">Pickup</label>
                     <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary" onclick="addPickupPin()">
                         <i class="fas fa-map-marker-alt fa-lg"></i>
@@ -40,7 +40,7 @@
 
             <div class="col-12 col-md-3 col-lg-3">
                 <div class="form-floating position-relative">
-                    <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off">
+                    <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off" readonly>
                     <label for="dropoff">Drop-off</label>
                     <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger" onclick="addDropoffPin()">
                         <i class="fas fa-location-dot fa-lg"></i>
@@ -73,10 +73,17 @@
         </div>
 
         <div class="offcanvas-body">
+
             <!-- Pickup and Dropoff Information -->
             <div class="mb-3">
                 <h6><strong>Pickup:</strong> <span id="pickupLocationDisplay">N/A</span></h6>
                 <h6><strong>Dropoff:</strong> <span id="dropoffLocationDisplay">N/A</span></h6>
+            </div>
+            <div class="mb-3">
+                <h6><strong>Pickup Lat:</strong> <span id="pickupLat">N/A</span></h6>
+                <h6><strong>Pickup Long:</strong> <span id="pickupLng">N/A</span></h6>
+                <h6><strong>Dropoff Lat:</strong> <span id="dropoffLat">N/A</span></h6>
+                <h6><strong>Dropoff Long:</strong> <span id="dropoffLng">N/A</span></h6>
             </div>
 
             <!-- Seat Type Selection -->
@@ -147,61 +154,3 @@
 
 <!-- Your custom map logic -->
 <script src="~/js/map - v3.js"></script>
-
-<script>
-            //Sidepass
-
-            // Function to check if pickup and dropoff are filled
-            function checkPickupDropoff() {
-                const pickup = document.getElementById('pickup').value;
-                const dropoff = document.getElementById('dropoff').value;
-                const nextBtn = document.getElementById('nextBtn');
-
-                // Enable the "Next" button only if both fields are filled
-                if (pickup && dropoff) {
-                    nextBtn.disabled = false;  // Enable the button
-                } else {
-                nextBtn.disabled = true;   // Disable the button
-                }
-            }
-
-        // Function to open sidebar when conditions are met
-        function openSidebar() {
-            const pickup = document.getElementById('pickup').value;
-            const dropoff = document.getElementById('dropoff').value;
-
-            if (pickup && dropoff) {
-                // Open the sidebar if both fields are filled
-                const sidebar = new bootstrap.Offcanvas(document.getElementById('sidepass'));
-                sidebar.show();
-            }
-        }
-
-        // Attach event listeners to both pickup and dropoff inputs
-        document.getElementById('pickup').addEventListener('input', checkPickupDropoff);
-        document.getElementById('dropoff').addEventListener('input', checkPickupDropoff);
-
-        // Attach click event to the "Next" button to trigger sidebar
-        document.getElementById('nextBtn').addEventListener('click', openSidebar);
-
-
-        // Function to calculate and display the distance and estimated time
-        function updateSidebar() {
-            const pickup = document.getElementById('pickup').value;
-            const dropoff = document.getElementById('dropoff').value;
-
-            // Check if both pickup and dropoff are filled
-            if (pickup && dropoff) {
-
-                // Update the sidebar with these values
-                document.getElementById('pickupLocationDisplay').innerText = pickup;
-                document.getElementById('dropoffLocationDisplay').innerText = dropoff;
-
-            }
-        }
-
-        // Attach event listeners to the pickup and dropoff fields to update the sidebar
-        document.getElementById('pickup').addEventListener('input', updateSidebar);
-        document.getElementById('dropoff').addEventListener('input', updateSidebar);
-
-</script>
