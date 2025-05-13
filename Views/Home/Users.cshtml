@@ -73,8 +73,8 @@
 
                             string statusClass = status switch
                             {
-                                "Verified" => "text-success",
-                                "Not Verified" => "text-warning",
+                                "Verified" => "bg-success text-white",
+                                "Not Verified" => "bg-warning text-dark",
                                 "Banned" => "bg-danger text-white",
                                 _ => "bg-secondary text-white"
                             };
@@ -97,7 +97,7 @@
                                 <td>@driver.VehicleType</td>
                                 <td>@driver.VehicleSeat</td>
                                 <td>@driver.VehicleModel</td>
-                                <td class="@statusClass">@driver.Status</td>
+                                <td class=""><span class="badge @statusClass">@driver.Status</span></td>
                             <td>
                                     <button class="btn btn-sm btn-outline-success"
                                             data-bs-toggle="modal"
@@ -192,22 +192,22 @@
                                                         <!-- Driver License -->
                                                         <div class="col-md-3 d-flex flex-column align-items-center mb-3">
                                                             <label class="form-label">Driver License</label>
-                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.DriverLicense)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View License</a>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.DriverLicense)" target="_blank" class="btn btn-sm btn-outline-dark mt-2">View License</a>
                                                         </div>
                                                         <!-- Certificate of Registration -->
                                                         <div class="col-md-3 d-flex flex-column align-items-center mb-3">
                                                             <label class="form-label">Certificate Registration</label>
-                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.CertificateRegistration)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View Certificate</a>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.CertificateRegistration)" target="_blank" class="btn btn-sm btn-outline-dark mt-2">View Certificate</a>
                                                         </div>
                                                         <!-- Official Receipt -->
                                                         <div class="col-md-3 d-flex flex-column align-items-center mb-3">
                                                             <label class="form-label">Official Receipt</label>
-                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.OfficialReceipt)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View Receipt</a>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.OfficialReceipt)" target="_blank" class="btn btn-sm btn-outline-dark mt-2">View Receipt</a>
                                                         </div>
                                                         <!-- NBI Clearance -->
                                                         <div class="col-md-3 d-flex flex-column align-items-center mb-3">
                                                             <label class="form-label">NBI Clearance</label>
-                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.NBIClearance)" target="_blank" class="btn btn-sm btn-outline-info mt-2">View NBI</a>
+                                                            <a href="@Url.Content("~/uploads/drivers/" + driver.NBIClearance)" target="_blank" class="btn btn-sm btn-outline-dark mt-2">View NBI</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -284,8 +284,8 @@
 
                             string emailStatusClass = emailStatus switch
                             {
-                                "Email Confirmed" => "text-success",
-                                "Email Not Confirmed" => "text-warning",
+                                "Email Confirmed" => "bg-success text-white",
+                                "Email Not Confirmed" => "bg-warning text-dark",
                                 _ => "bg-secondary text-white"
                             };
 
@@ -307,8 +307,10 @@
                             <td>@passenger.Email</td>
                             <td>@passenger.PhoneNumber</td>
                             <td>@passenger.CreatedAt</td>
-                                <td class="@emailStatusClass">
-                                    @(passenger.EmailConfirmed ? "Email Confirmed" : "Email Not Confirmed")
+                                <td class="">
+                                    <span class="badge @emailStatusClass">
+                                        @(passenger.EmailConfirmed ? "Email Confirmed" : "Email Not Confirmed")
+                                    </span>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-danger"

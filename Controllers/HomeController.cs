@@ -123,6 +123,8 @@ namespace IT15_Project.Controllers
             return RedirectToAction("Users");
         }
 
+
+        //Approval and Reject Driver
         [HttpPost]
         public async Task<IActionResult> ApproveDriver(int DriverId, string? RejectionReason, string? action)
         {
@@ -168,11 +170,99 @@ namespace IT15_Project.Controllers
 
 
         //-------------------------------------------------------------------------------------------------------------------------------
-        /*Fare Settings*/
-        [Authorize(Roles = "Admin")]
-        public IActionResult PayEarn() => View();
- 
- //-------------------------------------------------------------------------------------------------------------------------------       
+        public IActionResult PayEarn()
+        {
+            var model = new FareSettingsViewModel
+            {
+                Fare4 = _context.FareSettings.FirstOrDefault(f => f.SeatType == "4-seater"),
+                Fare6 = _context.FareSettings.FirstOrDefault(f => f.SeatType == "6-seater"),
+                Fare1 = _context.FareSettings.FirstOrDefault(f => f.SeatType == "1-seater")
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCarFare(decimal BaseFare4Seater, decimal PerKilometerRate4Seater, decimal BaseFare6Seater, decimal PerKilometerRate6Seater, decimal PerMinuteRate, int DriverShareRate, int CommissionRate)
+        {
+            // Fetching the fare settings for both 4-seater and 6-seater
+            var fare4Seater = await _context.FareSettings.FirstOrDefaultAsync(f => f.SeatType == "4-Seater");
+            var fare6Seater = await _context.FareSettings.FirstOrDefaultAsync(f => f.SeatType == "6-Seater");
+
+            if (fare4Seater == null || fare6Seater == null)
+            {
+                return NotFound("Fare settings not found.");
+            }
+
+            // Update 6-Seater fare settings
+            fare6Seater.BaseFare = BaseFare6Seater;
+            fare6Seater.PerKilometerRate = PerKilometerRate6Seater;
+            fare6Seater.PerMinuteRate = PerMinuteRate;
+            fare6Seater.DriverShareRate = DriverShareRate;
+            fare6Seater.CommissionRate = CommissionRate;
+
+            // Update 4-Seater fare settings
+            fare4Seater.BaseFare = BaseFare4Seater;
+            fare4Seater.PerKilometerRate = PerKilometerRate4Seater;
+            fare4Seater.PerMinuteRate = fare6Seater.PerMinuteRate; // Copy from 6-Seater
+            fare4Seater.DriverShareRate = fare6Seater.DriverShareRate; // Copy from 6-Seater
+            fare4Seater.CommissionRate = fare6Seater.CommissionRate; // Copy from 6-Seater
+
+            // Save changes to the database
+            try
+            {
+                _context.FareSettings.Update(fare4Seater);
+                _context.FareSettings.Update(fare6Seater);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Something went wrong while updating fare settings.");
+                return View(); // or return to the current view with an error message
+            }
+
+            TempData["Success"] = "Fare settings updated successfully.";
+            return RedirectToAction("PayEarn");
+        }
+
+
+
+        //Motor Update
+        [HttpPost]
+        public async Task<IActionResult> UpdateMotorFare(int Id, decimal BaseFare, decimal PerKilometerRate, decimal PerMinuteRate, int DriverShareRate, int CommissionRate)
+        {
+            var fareSetting = await _context.FareSettings.FindAsync(Id);
+            if (fareSetting == null)
+            {
+                return NotFound();
+            }
+
+            // Update the fare setting values
+            fareSetting.BaseFare = BaseFare;
+            fareSetting.PerKilometerRate = PerKilometerRate;
+            fareSetting.PerMinuteRate = PerMinuteRate;
+            fareSetting.DriverShareRate = DriverShareRate;
+            fareSetting.CommissionRate = CommissionRate;
+
+            // Save changes to database
+            try
+            {
+                _context.FareSettings.Update(fareSetting);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the error here
+                ModelState.AddModelError("", "Something went wrong while updating fare settings.");
+                return View(); // or return to the current view with error
+            }
+
+            TempData["Success"] = "Motorcycle fare updated successfully.";
+            return RedirectToAction("PayEarn"); // or your dashboard or fare settings page
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------       
         /*Reviews*/
         [Authorize(Roles = "Admin")]
         public IActionResult RateReview() => View();
