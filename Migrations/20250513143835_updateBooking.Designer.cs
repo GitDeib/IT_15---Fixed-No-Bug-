@@ -4,6 +4,7 @@ using IT15_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IT15_Project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513143835_updateBooking")]
+    partial class updateBooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,96 @@ namespace IT15_Project.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double?>("ActualTimeInMinutes")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("DistanceInKm")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DriverId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("DropoffLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DropoffLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("DropoffLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("EstimatedFare")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("EstimatedTimeInMinutes")
+                        .HasColumnType("float");
+
+                    b.Property<int>("FareSettingsId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("FinalFare")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<double>("PickupLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("PickupLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("PickupLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VehicleSeat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("FareSettingsId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
+                });
 
             modelBuilder.Entity("Driver", b =>
                 {
@@ -167,95 +260,6 @@ namespace IT15_Project.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("IT15_Project.Models.Booking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double?>("ActualTimeInMinutes")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("DistanceInKm")
-                        .HasColumnType("float");
-
-                    b.Property<string>("DriverId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double>("DropoffLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("DropoffLocation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("DropoffLongitude")
-                        .HasColumnType("float");
-
-                    b.Property<decimal>("EstimatedFare")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double>("EstimatedTimeInMinutes")
-                        .HasColumnType("float");
-
-                    b.Property<int>("FareSettingsId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("FinalFare")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PickupLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("PickupLocation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("PickupLongitude")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("RequestedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VehicleSeat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VehicleType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DriverId");
-
-                    b.HasIndex("FareSettingsId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Bookings");
-                });
-
             modelBuilder.Entity("IT15_Project.Models.FareSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -399,25 +403,25 @@ namespace IT15_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "07b0d62e-b6a8-4be7-bc6a-6fdfe34487ba",
+                            Id = "d47e20a1-5071-48e6-aed7-2a9c5a72a4e2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "ac1ea701-9d63-43de-8159-2bc8169fc8e9",
+                            Id = "8f6960dd-fbec-49a6-a39c-bd5336710edb",
                             Name = "Passenger",
                             NormalizedName = "PASSENGER"
                         },
                         new
                         {
-                            Id = "d116a46c-dc91-45e7-b3c9-0b68aa33f4d0",
+                            Id = "7a968cdb-97a2-4e45-9ad9-14e8691f16d2",
                             Name = "Driver",
                             NormalizedName = "DRIVER"
                         },
                         new
                         {
-                            Id = "c825195e-6b1b-460c-9f76-ff4a877c840f",
+                            Id = "4819c61b-f265-4249-941c-eaf363d3b5b8",
                             Name = "Staff",
                             NormalizedName = "STAFF"
                         });
@@ -533,18 +537,7 @@ namespace IT15_Project.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Driver", b =>
-                {
-                    b.HasOne("IT15_Project.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("DriverProfile")
-                        .HasForeignKey("Driver", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("IT15_Project.Models.Booking", b =>
+            modelBuilder.Entity("Booking", b =>
                 {
                     b.HasOne("IT15_Project.Models.ApplicationUser", "Driver")
                         .WithMany()
@@ -560,7 +553,8 @@ namespace IT15_Project.Migrations
                     b.HasOne("IT15_Project.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Driver");
 
@@ -569,9 +563,20 @@ namespace IT15_Project.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Driver", b =>
+                {
+                    b.HasOne("IT15_Project.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("DriverProfile")
+                        .HasForeignKey("Driver", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("IT15_Project.Models.RatingReview", b =>
                 {
-                    b.HasOne("IT15_Project.Models.Booking", "Booking")
+                    b.HasOne("Booking", "Booking")
                         .WithMany("RatingsReviews")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -631,15 +636,15 @@ namespace IT15_Project.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Booking", b =>
+                {
+                    b.Navigation("RatingsReviews");
+                });
+
             modelBuilder.Entity("IT15_Project.Models.ApplicationUser", b =>
                 {
                     b.Navigation("DriverProfile")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("IT15_Project.Models.Booking", b =>
-                {
-                    b.Navigation("RatingsReviews");
                 });
 #pragma warning restore 612, 618
         }

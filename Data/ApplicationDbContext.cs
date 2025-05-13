@@ -17,6 +17,10 @@ namespace IT15_Project.Data
 
         public DbSet<FareSetting> FareSettings { get; set; }
 
+        public DbSet<Booking> Bookings { get; set; }
+
+        public DbSet<RatingReview> RatingReviews { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,6 +31,33 @@ namespace IT15_Project.Data
                 .HasOne(a => a.DriverProfile)
                 .WithOne(d => d.ApplicationUser)
                 .HasForeignKey<Driver>(d => d.UserId);
+
+            builder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuring the relationship between Booking and ApplicationUser (Driver)
+            builder.Entity<Booking>()
+                .HasOne(b => b.Driver)
+                .WithMany()
+                .HasForeignKey(b => b.DriverId)
+                .OnDelete(DeleteBehavior.SetNull);  
+
+            // Configuring the relationship between Booking and FareSetting
+            builder.Entity<Booking>()
+                .HasOne(b => b.FareSetting)
+                .WithMany()
+                .HasForeignKey(b => b.FareSettingsId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configuring the relationship between Booking and RatingReview
+            builder.Entity<Booking>()
+                .HasMany(b => b.RatingsReviews)
+                .WithOne(rr => rr.Booking)
+                .HasForeignKey(rr => rr.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             //Roles

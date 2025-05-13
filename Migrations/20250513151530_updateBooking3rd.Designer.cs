@@ -4,6 +4,7 @@ using IT15_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IT15_Project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513151530_updateBooking3rd")]
+    partial class updateBooking3rd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,6 +238,7 @@ namespace IT15_Project.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("VehicleSeat")
@@ -399,25 +403,25 @@ namespace IT15_Project.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "07b0d62e-b6a8-4be7-bc6a-6fdfe34487ba",
+                            Id = "91239aaa-7327-462c-9033-c332efc55df6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "ac1ea701-9d63-43de-8159-2bc8169fc8e9",
+                            Id = "869256bf-5d45-466b-abfd-185a14afeceb",
                             Name = "Passenger",
                             NormalizedName = "PASSENGER"
                         },
                         new
                         {
-                            Id = "d116a46c-dc91-45e7-b3c9-0b68aa33f4d0",
+                            Id = "3f16ad31-45f7-4d1d-82ec-2084c5e29e0a",
                             Name = "Driver",
                             NormalizedName = "DRIVER"
                         },
                         new
                         {
-                            Id = "c825195e-6b1b-460c-9f76-ff4a877c840f",
+                            Id = "59b503d1-a91f-4996-8cd5-4d19ae0d6d83",
                             Name = "Staff",
                             NormalizedName = "STAFF"
                         });
@@ -560,7 +564,8 @@ namespace IT15_Project.Migrations
                     b.HasOne("IT15_Project.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Driver");
 

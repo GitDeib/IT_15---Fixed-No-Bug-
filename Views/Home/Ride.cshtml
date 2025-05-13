@@ -24,6 +24,19 @@
 
 <div class="position-fixed start-0 w-100 shadow" style="top: 85px; z-index: 2;">
     <div class="px-3 pb-3 bg-white bg-opacity-75 rounded-bottom" style="max-height: 180px;">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["Error"]
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
+
         <h1 class="text-center fs-4 mb-3">Set Destination</h1>
         <form class="row g-2 justify-content-center">
             
@@ -69,10 +82,50 @@
     <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="sidepass">
         <div class="offcanvas-header bg-white border-bottom">
             <h5 class="offcanvas-title text-black">Passenger</h5>
+            <h6 class="offcanvas-title text-black">Status:<span class="badge text-black">N/A</span></h6>
+
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 
         <div class="offcanvas-body">
+
+            <!-- Seat Type Selection -->
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select" id="Typevehicle">
+                        <option disabled selected>Select Type</option>
+                        <option>Car</option>
+                        <option>Motorcycle</option>
+                    </select>
+                    <label for="Typevehicle">Type of Vehicle</label>
+                </div>
+            </div>
+
+            <!-- Seat Type Selection -->
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select" id="rideType">
+                        <option disabled selected>Select Type</option>
+                      @*   <option value="1-seater">1-seater</option>
+                        <option value="4-seater">4-seater</option>
+                        <option value="6-seater">6-seater</option> *@
+                    </select>
+                    <label for="rideType">Seat Type</label>
+                </div>
+            </div>
+
+            <!-- Rate Info Section -->
+            <div class="row text-center">
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Base Fare:</strong><br /> <span id="baseFare">₱</span></p>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Per Km:</strong><br /> <span id="perKm">₱/km</span></p>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <p class="mb-0"><strong>Per Min:</strong><br /> <span id="perMinute">₱/min</span></p>
+                </div>
+            </div>
 
             <!-- Pickup and Dropoff Information -->
             <div class="mb-3">
@@ -86,36 +139,10 @@
                 <h6><strong>Dropoff Long:</strong> <span id="dropoffLng">N/A</span></h6>
             </div>
 
-            <!-- Seat Type Selection -->
-            <div class="mb-3">
-                <div class="form-floating">
-                    <select class="form-select" id="rideType">
-                        <option disabled selected>Select Type</option>
-                        <option>Any</option>
-                        <option>4-seater</option>
-                        <option>6-seater</option>
-                    </select>
-                    <label for="rideType">Seat Type</label>
-                </div>
-            </div>
-
             <!-- Distance and Time Information -->
             <div class="mb-3">
                 <h6><strong>Distance:</strong> <span id="distanceDisplay">N/A</span> </h6>
                 <h6><strong>Estimated Time:</strong> <span id="timeDisplay">N/A</span> </h6>
-            </div>
-
-            <!-- Rate Info Section -->
-            <div class="row text-center">
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Base Fare:</strong> <span id="baseFare">₱50.00</span></p>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Kilometer:</strong> <span id="perKm">₱12.00/km</span></p>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Minute:</strong> <span id="perMinute">₱3.00/min</span></p>
-                </div>
             </div>
 
 
@@ -146,11 +173,27 @@
 
         </div>
 
-        <button type="button" class="btn btn-dark">
-            Book
-        </button>
+        <form method="post" asp-controller="Home" asp-action="Ride" id="bookingForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="PickupLocation" id="PickupLocationInput">
+            <input type="hidden" name="DropoffLocation" id="DropoffLocationInput">
+            <input type="hidden" name="PickupLatitude" id="PickupLatInput">
+            <input type="hidden" name="PickupLongitude" id="PickupLngInput">
+            <input type="hidden" name="DropoffLatitude" id="DropoffLatInput">
+            <input type="hidden" name="DropoffLongitude" id="DropoffLngInput">
+            <input type="hidden" name="DistanceInKm" id="DistanceInput">
+            <input type="hidden" name="EstimatedTimeInMinutes" id="TimeInput">
+            <input type="hidden" name="EstimatedFare" id="FareInput">
+            <input type="hidden" name="VehicleType" id="VehicleTypeInput">
+            <input type="hidden" name="VehicleSeat" id="VehicleSeatInput">
+            <input type="hidden" name="FareSettingsId" id="FareSettingsIdInput">
+
+            <button type="button" class="btn btn-dark" onclick="submitBooking()">Book</button>
+        </form>
+
     </div>
 
 
 <!-- Your custom map logic -->
 <script src="~/js/map - v3.js"></script>
+

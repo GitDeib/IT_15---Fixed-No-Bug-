@@ -55,6 +55,69 @@ namespace IT15_Project.Controllers
         /*Passenger Routes*/
         [Authorize(Roles = "Passenger")]
         public IActionResult Ride() => View();
+
+        public async Task<IActionResult> GetFareDetails(string seatType)
+        {
+            if (string.IsNullOrEmpty(seatType))
+            {
+                return Json(new { error = "Seat type is required." });
+            }
+
+            var fareSetting = await _context.FareSettings
+                                            .FirstOrDefaultAsync(f => f.SeatType == seatType);
+
+            if (fareSetting == null)
+            {
+                return Json(new { error = "Fare details not found for selected seat type." });
+            }
+
+            return Json(new
+            {
+                BaseFare = fareSetting.BaseFare,
+                PerKilometerRate = fareSetting.PerKilometerRate,
+                PerMinuteRate = fareSetting.PerMinuteRate
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Ride(Booking model)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Error"] = "You must be logged in to book a ride.";
+                return RedirectToAction("Ride");
+            }
+
+            model.UserId = userId;
+
+            if (ModelState.IsValid)
+            {
+                var fareSetting = await _context.FareSettings.FindAsync(model.FareSettingsId);
+                if (fareSetting == null)
+                {
+                    TempData["Error"] = "Invalid fare setting selected.";
+                    return RedirectToAction("Ride");
+                }
+
+                model.Status = BookingStatus.Pending;
+                model.RequestedAt = DateTime.UtcNow;
+
+                _context.Bookings.Add(model);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Booking successfully created!";
+                return RedirectToAction("Ride");
+            }
+
+            TempData["Error"] = string.Join(" | ", ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage));
+
+            return RedirectToAction("Ride");
+        }
+
+
         [Authorize(Roles = "Passenger")]
         public IActionResult RideMotor() => View();
         public IActionResult DriverReg() => View();
