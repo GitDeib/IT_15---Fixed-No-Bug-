@@ -64,7 +64,9 @@ namespace IT15_Project.Controllers
 
             // Get active booking if exists
             var activeBooking = await _context.Bookings
+                .Include(b => b.FareSetting)
                 .Include(b => b.Driver)
+                .ThenInclude(b => b.DriverProfile)
                 .Where(b => b.UserId == userId &&
                     (b.Status == BookingStatus.Pending ||
                      b.Status == BookingStatus.Accepted ||
@@ -140,7 +142,40 @@ namespace IT15_Project.Controllers
             return RedirectToAction("Ride");
         }
 
+        //Cancel booking 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Passenger")]
+        public async Task<IActionResult> CancelBooking(int bookingId)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index");
+            }
 
+            var booking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
+
+            if (booking == null)
+            {
+                TempData["Error"] = "Booking not found.";
+                return RedirectToAction("Ride");
+            }
+
+            if (booking.Status != BookingStatus.Pending)
+            {
+                TempData["Error"] = "Only pending bookings can be cancelled.";
+                return RedirectToAction("Ride");
+            }
+
+            booking.Status = BookingStatus.Cancelled;
+            _context.Update(booking);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Booking cancelled successfully.";
+            return RedirectToAction("Ride");
+        }
 
 
         [Authorize(Roles = "Passenger")]
@@ -466,7 +501,7 @@ public async Task<IActionResult> AcceptBooking(int bookingId)
         }
 
 
-        [HttpPost]
+       /* [HttpPost]
         [Authorize(Roles = "Driver")]
         public async Task<IActionResult> CancelRide(int bookingId)
         {
@@ -479,7 +514,8 @@ public async Task<IActionResult> AcceptBooking(int bookingId)
 
             await _context.SaveChangesAsync();
             return RedirectToAction("Driver");
-        }
+        }*/
+
         [HttpPost]
         [Authorize(Roles = "Driver")]
         public async Task<IActionResult> MarkComplete(int bookingId)

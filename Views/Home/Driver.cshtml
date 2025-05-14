@@ -3,183 +3,221 @@
 @model DriverDashboardViewModel
 @using IT15_Project.Models;
 
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" />
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Mapbox -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet" />
-<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js"></script>
-
-<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css" rel="stylesheet" />
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js"></script>
-
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet" />
 
-<div class="container-fluid">
-    <div class="row min-vh-100">
-        <!-- Left Column: Driver Info + Rating -->
-        <div class="col-md-3 bg-light p-4">
-            <h4 class="mb-3">Driver Details</h4>
-            <!-- Profile Picture -->
-            <img src="~/uploads/drivers/@Model.Driver.ApplicationUser.ProfilePhotoPath"  class="rounded-circle" width="100" height="100">
-            <p><strong>Name:</strong> @Model.Driver.ApplicationUser.FullName</p> <!-- Updated to use UserName -->
-            <p>
-                <strong>Status:</strong>
-                @if (Model.Driver.Status == "Verified")
-                {
-                    <span class="badge bg-success">Verified</span>
-                }
-                else
-                {
-                    <span class="badge bg-warning text-dark">Not Verified</span>
-                }
+<!-- Fullscreen Map -->
+<div id="map" class="position-fixed start-0 w-100" style="top: 85px; bottom: 60px; z-index: 0;"></div>
 
-            </p>
-            <p><strong>License No.:</strong> D12345678</p>
-            <p><strong>Vehicle:</strong> Toyota Vios</p>
-            <p><strong>Plate:</strong> ABC-1234</p>
+<!-- Sidebar Button (Floating) -->
+<div id="pullHandle" class="position-fixed top-50 translate-middle-y" style="right: 0; z-index: 1050;">
+    <button type="button"
+            class="btn bg-dark text-white rounded-start-pill px-3 py-2 shadow-sm d-flex align-items-center"
+            data-bs-toggle="offcanvas" data-bs-target="#passavail" aria-label="Show Details"
+            style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+        <i class="fas fa-users me-2"></i>
+        <span class="d-none d-md-inline">Details</span>
+    </button>
+</div>
 
-            <hr>
-
-            <!-- Rating Section -->
-            <h4 class="mt-4">Rating</h4>
-            <div class="mb-4">
-                <!-- Example of dynamic rating -->
-                @for (int i = 0; i < 5; i++)
-                {
-                    <span class="text-warning">&#9733;</span>
-                }
-                <p class="mt-2">
-                    @(Model.CurrentRide?.RatingsReviews?.Any() == true ?
-                        Model.CurrentRide.RatingsReviews.Average(r => r.Rating).ToString("F1") :
-                        "No Rating")
-                    out of 5
-                </p>
-            </div>
-            <hr>
-
-            <!-- Payout Request Section -->
-            <h4 class="mt-4">Payout Request</h4>
-            <div class="mb-3">
-                <p><strong>Base Fare:</strong> ₱@Model.FareSetting?.BaseFare ?? 0</p> <!-- Updated to handle null values -->
-                <p><strong>Per Kilometer Rate:</strong> ₱@Model.FareSetting?.PerKilometerRate ?? 0</p>
-                <p><strong>Per Minute Rate:</strong> ₱@Model.FareSetting?.PerMinuteRate ?? 0</p>
-
-                <button class="btn btn-outline-primary btn-sm">Request Payout</button>
-            </div>
-
+<!-- Offcanvas Sidebar: Ride Details / Available Passengers -->
+<div class="offcanvas offcanvas-end shadow" tabindex="-1" id="passavail" data-bs-backdrop="false" data-bs-scroll="true">
+    <div class="offcanvas-header bg-white border-bottom py-3">
+        <div>
+            <h5 class="offcanvas-title fw-semibold text-dark">Ride Details</h5>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body bg-light">
+        @if (Model.Driver.Status != "Verified")
+        {
+            <div class="alert alert-warning rounded-3 shadow-sm" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                You must be verified to accept bookings.
+            </div>
+        }
 
-        <!-- Center Column: Wallet & Current Ride -->
-        <div class="col-md-6 p-4 text-center">
-            <div class="card text-black bg-white glass-panel p-3 d-flex flex-column justify-content-between mb-4">
-                <h5 class="card-title">Driver's Available Balance</h5>
-                <div class="d-flex align-items-center justify-content-center">
-                    <img src="~/lib/GIF/profit.gif" alt="KM" style="width: 50px; height: 50px;">
-                    <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱@Model.CurrentRide?.EstimatedFare ?? 0</p> <!-- Updated to handle null values -->
+        @if (Model.AcceptedRide != null)
+        {
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-user text-primary fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Current Ride</h6>
+                            <p class="text-muted mb-0">Passenger: @Model.AcceptedRide.User?.FullName</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
+                        <div class="fw-medium">@Model.AcceptedRide.PickupLocation</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Destination</h6>
+                        <div class="fw-medium">@Model.AcceptedRide.DropoffLocation</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Vehicle Type</h6>
+                            <div class="fw-medium">@Model.AcceptedRide.VehicleType</div>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Fare</h6>
+                            <div class="fw-medium text-success">₱@Model.AcceptedRide.EstimatedFare.ToString("F2")</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <form asp-action="CompleteRide" method="post" class="flex-grow-1">
+                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
+                            <button type="submit" class="btn btn-success w-100 rounded-pill shadow-sm">
+                                <i class="fas fa-check-circle me-2"></i> Picked Up
+                            </button>
+                        </form>
+                        <form asp-action="CancelRide" method="post" class="flex-grow-1">
+                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
+                            <button type="submit" class="btn btn-outline-danger w-100 rounded-pill shadow-sm">
+                                <i class="fas fa-times-circle me-2"></i> Cancel
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <!-- Map Placeholder -->
-            <div id="map" class="mb-4" style="height: 300px; width: 100%; border: 2px solid #ccc; border-radius: 10px;">
-                <!-- Map will be rendered here by JS -->
-            </div>
-
-            <button class="btn btn-outline-dark" onclick="toggleInstructions()">Show Direction</button>
-
-            <script>
-                function toggleInstructions() {
-                    const el = document.querySelector('.mapbox-directions-instructions');
-                    if (el) {
-                        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-                    }
-                }
-            </script>
-
-            <hr>
-            <!-- Current Ride Info -->
-            <div class="card bg-light p-3 mb-2">
-                <h5 class="card-title">Current Ride</h5>
-
-                @if (Model.AcceptedRide != null)
-                {
-                    <p><strong>Passenger:</strong> @Model.AcceptedRide.User?.FullName</p>
-                    <p><strong>Pickup:</strong> @Model.AcceptedRide.PickupLocation</p>
-                    <p><strong>Destination:</strong> @Model.AcceptedRide.DropoffLocation</p>
-                    <p><strong>Vehicle Type:</strong> @Model.AcceptedRide.VehicleType</p>
-                    <p><strong>Estimated Fare:</strong> ₱@Model.AcceptedRide.EstimatedFare.ToString("F2")</p>
-
-                    <div class="d-flex justify-content-center gap-2 mt-2">
-                        <form asp-action="CompleteRide" method="post">
-                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
-                            <button type="submit" class="btn btn-success btn-sm">Picked Up</button>
-                        </form>
-                        <form asp-action="CancelRide" method="post">
-                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                        </form>
+        }
+        else if (Model.StartedRide != null)
+        {
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-car text-info fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Ongoing Ride</h6>
+                            <p class="text-muted mb-0">Passenger: @Model.StartedRide.User?.FullName</p>
+                        </div>
                     </div>
-                }
-                else if (Model.StartedRide != null)
-                {
-                    <p><strong>Passenger:</strong> @Model.StartedRide.User?.FullName</p>
-                    <p><strong>Pickup:</strong> @Model.StartedRide.PickupLocation</p>
-                    <p><strong>Destination:</strong> @Model.StartedRide.DropoffLocation</p>
-                    <p><strong>Vehicle Type:</strong> @Model.StartedRide.VehicleType</p>
-                    <p><strong>Estimated Fare:</strong> ₱@Model.StartedRide.EstimatedFare.ToString("F2")</p>
 
-                    <div class="d-flex justify-content-center gap-2 mt-2">
-                        <form asp-action="MarkComplete" method="post">
-                            <input type="hidden" name="bookingId" value="@Model.StartedRide.Id" />
-                            <button type="submit" class="btn btn-primary btn-sm">Complete Ride</button>
-                        </form>
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
+                        <div class="fw-medium">@Model.StartedRide.PickupLocation</div>
                     </div>
-                }
-                else
-                {
-                    <p class="text-muted">No active ride at the moment.</p>
-                }
+
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Destination</h6>
+                        <div class="fw-medium">@Model.StartedRide.DropoffLocation</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Vehicle Type</h6>
+                            <div class="fw-medium">@Model.StartedRide.VehicleType</div>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Fare</h6>
+                            <div class="fw-medium text-success">₱@Model.StartedRide.EstimatedFare.ToString("F2")</div>
+                        </div>
+                    </div>
+
+                    <form asp-action="MarkComplete" method="post">
+                        <input type="hidden" name="bookingId" value="@Model.StartedRide.Id" />
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">
+                            <i class="fas fa-flag-checkered me-2"></i> Complete Ride
+                        </button>
+                    </form>
+                </div>
             </div>
+        }
+        else
+        {
+            <h6 class="fw-bold mb-3">Available Passengers</h6>
 
-
- 
-        </div>
-
-        <!-- Right Column: Available Passengers -->
-        <div class="col-md-3 bg-light p-4">
-            <h4 class="mb-3">Available Passengers</h4>
-            @if (Model.Driver.Status != "Verified")
+            @foreach (var passenger in Model.AvailablePassengers)
             {
-                <div class="alert alert-warning">
-                    You must be verified to accept bookings.
-                </div>
-            }
-            <div class="list-group">
-                @foreach (var passenger in Model.AvailablePassengers)
-                {
-                    <div class="list-group-item glass-panel mb-3">
-                        <p><strong>Passenger:</strong> @passenger.User?.FullName</p>
-                        <p><small>Pickup: @passenger.PickupLocation</small></p>
-                        <p><small>Destination: @passenger.DropoffLocation</small></p>
-                        <p><small>Seats: @passenger.VehicleSeat | Time: @passenger.RequestedAt.ToString("hh:mm tt")</small></p>
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-user text-success fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">@passenger.User?.FullName</h6>
+                                <p class="text-muted mb-0">@passenger.RequestedAt.ToString("hh:mm tt")</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup</h6>
+                            <div class="fw-medium">@passenger.PickupLocation</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Destination</h6>
+                            <div class="fw-medium">@passenger.DropoffLocation</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <h6 class="text-muted mb-1"><i class="fas fa-chair me-2"></i>Seats</h6>
+                                <div class="fw-medium">@passenger.VehicleSeat</div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Type</h6>
+                                <div class="fw-medium">@passenger.VehicleType</div>
+                            </div>
+                        </div>
 
                         @if (Model.Driver.Status == "Verified")
                         {
                             <form asp-action="AcceptBooking" asp-controller="Home" method="post">
                                 <input type="hidden" name="bookingId" value="@passenger.Id" />
-                                <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                <button type="submit" class="btn btn-success w-100 rounded-pill shadow-sm">
+                                    <i class="fas fa-check-circle me-2"></i> Accept
+                                </button>
                             </form>
                         }
                         else
                         {
-                            <button class="btn btn-sm btn-secondary" disabled>Accept (Verify First)</button>
+                            <button class="btn btn-secondary w-100 rounded-pill shadow-sm" disabled>
+                                <i class="fas fa-lock me-2"></i> Verify First
+                            </button>
                         }
                     </div>
-                }
-
-            </div>
-        </div>
+                </div>
+            }
+        }
     </div>
 </div>
 
+<!-- Mapbox Helper Script -->
 <script src="~/js/DriverMap.js"></script>
+
+<script>
+    const offcanvasElement = document.getElementById('passavail');
+    const pullHandle = document.getElementById('pullHandle');
+
+    if (offcanvasElement && pullHandle) {
+        offcanvasElement.addEventListener('show.bs.offcanvas', function () {
+            pullHandle.style.display = 'none';
+        });
+
+        offcanvasElement.addEventListener('hidden.bs.offcanvas', function () {
+            pullHandle.style.display = 'block';
+        });
+    }
+</script>

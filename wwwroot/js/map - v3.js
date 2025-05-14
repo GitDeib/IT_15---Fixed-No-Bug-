@@ -259,35 +259,46 @@ seatTypeSelect.addEventListener('change', function () {
 });
 
 function submitBooking() {
+    const vehicleTypeSelect = document.getElementById("Typevehicle");
+    const seatTypeSelect = document.getElementById("rideType");
+
+    const vehicleTypeError = document.getElementById("vehicleTypeError");
+    const seatTypeError = document.getElementById("seatTypeError");
+
+    let hasError = false;
+
+    // Reset error messages
+    vehicleTypeError.classList.add("d-none");
+    seatTypeError.classList.add("d-none");
+    vehicleTypeSelect.classList.remove("is-invalid");
+    seatTypeSelect.classList.remove("is-invalid");
+
+    // Validation
+    if (vehicleTypeSelect.selectedIndex === 0) {
+        vehicleTypeError.classList.remove("d-none");
+        vehicleTypeSelect.classList.add("is-invalid");
+        hasError = true;
+    }
+    if (seatTypeSelect.selectedIndex === 0) {
+        seatTypeError.classList.remove("d-none");
+        seatTypeSelect.classList.add("is-invalid");
+        hasError = true;
+    }
+
+    if (hasError) return; // Stop form submission if any errors
+
+    // Proceed to set hidden inputs and submit the form
     const pickup = document.getElementById("pickupLocationDisplay").textContent;
     const dropoff = document.getElementById("dropoffLocationDisplay").textContent;
     const pickupLat = document.getElementById("pickupLat").textContent;
     const pickupLng = document.getElementById("pickupLng").textContent;
     const dropoffLat = document.getElementById("dropoffLat").textContent;
     const dropoffLng = document.getElementById("dropoffLng").textContent;
-    const distance = document.getElementById("distanceDisplay").textContent.replace(/[^0-9.]/g, ""); // removes ' km'
-    const time = document.getElementById("timeDisplay").textContent.replace(/[^0-9.]/g, ""); // removes ' minutes'
+    const distance = document.getElementById("distanceDisplay").textContent.replace(/[^0-9.]/g, "");
+    const time = document.getElementById("timeDisplay").textContent.replace(/[^0-9.]/g, "");
     const fare = document.getElementById("totalFare").textContent.replace(/[₱,]/g, "");
-    const vehicleType = vehicleTypeSelect.value;
-    const seatType = seatTypeSelect.value;
-    const fareSettingId = fareSettingsInput.value;
+    const fareSettingId = document.getElementById("FareSettingsIdInput").value;
 
-    console.log({
-        PickupLocation: pickup,
-        DropoffLocation: dropoff,
-        PickupLat: pickupLat,
-        PickupLng: pickupLng,
-        DropoffLat: dropoffLat,
-        DropoffLng: dropoffLng,
-        Distance: distance,
-        Time: time,
-        Fare: fare,
-        VehicleType: vehicleType,
-        VehicleSeat: seatType,
-        FareSettingsId: fareSettingId
-    });
-
-    // Set hidden input values
     document.getElementById("PickupLocationInput").value = pickup;
     document.getElementById("DropoffLocationInput").value = dropoff;
     document.getElementById("PickupLatInput").value = pickupLat;
@@ -297,10 +308,10 @@ function submitBooking() {
     document.getElementById("DistanceInput").value = distance;
     document.getElementById("TimeInput").value = time;
     document.getElementById("FareInput").value = fare;
-    document.getElementById("VehicleTypeInput").value = vehicleType;
-    document.getElementById("VehicleSeatInput").value = seatType;
+    document.getElementById("VehicleTypeInput").value = vehicleTypeSelect.value;
+    document.getElementById("VehicleSeatInput").value = seatTypeSelect.value;
     document.getElementById("FareSettingsIdInput").value = fareSettingId;
 
-    // Submit form
     document.getElementById("bookingForm").submit();
 }
+

@@ -1,5 +1,6 @@
 ﻿﻿@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Passenger")]
+@using IT15_Project.Models
 
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" />
@@ -22,7 +23,9 @@
 <!-- Fullscreen Map -->
 <div id="map" class="position-fixed start-0 w-100" style="top: 85px; bottom: 60px; z-index: 0;"></div>
 
-@if (ViewBag.ActiveBooking == null || ViewBag.ActiveBooking.Status != 0) // NOT Pending
+@if (ViewBag.ActiveBooking == null ||
+   (ViewBag.ActiveBooking.Status == BookingStatus.Completed &&
+    ViewBag.ActiveBooking.PaymentStatus == PaymentStatus.Paid))
 {
     <div class="position-fixed start-0 w-100 shadow" style="top: 85px; z-index: 2;">
         <div class="px-3 pb-3 bg-white bg-opacity-75 rounded-bottom" style="max-height: 180px;">
@@ -69,121 +72,106 @@
                 </div>
             </form>
 
-            <!-- Floating Button -->
-            <button type="button" class="btn btn-dark rounded-circle shadow position-fixed"
-                    style="bottom: 20px; right: 20px; z-index: 1050;"
-                    data-bs-toggle="offcanvas" data-bs-target="#sidepass" aria-controls="sidepass">
-                <i class="fas fa-car"></i>
-            </button>
         </div>
     </div>
-}
-        @if (ViewBag.ActiveBooking != null && ViewBag.ActiveBooking.Status == 0) // Pending
-        {
-            <div class="alert alert-info text-center mt-3" role="alert">
-                You have a pending booking. Please wait for a driver to accept your request.
-            </div>
-        }
-
-
-    </div>
-
 
     <!-- Sidebar Next -->
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="sidepass">
-        <div class="offcanvas-header bg-white border-bottom">
-            <h5 class="offcanvas-title text-black">Passenger</h5>
-            <h6 class="offcanvas-title text-black">Status:<span class="badge text-black">N/A</span></h6>
-
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas offcanvas-end shadow" tabindex="-1" id="sidepass" data-bs-backdrop="false" data-bs-scroll="true">
+    <div class="offcanvas-header bg-white border-bottom py-3">
+        <div>
+            <h5 class="offcanvas-title fw-semibold text-dark">Book a Ride</h5>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
 
-        <div class="offcanvas-body">
-
-            <!-- Seat Type Selection -->
-            <div class="mb-3">
-                <div class="form-floating">
-                    <select class="form-select" id="Typevehicle">
-                        <option disabled selected>Select Type</option>
-                        <option>Car</option>
-                        <option>Motorcycle</option>
-                    </select>
+    <div class="offcanvas-body bg-light">
+        <!-- Vehicle Type -->
+        <div class="mb-4">
+            <h6 class="text-muted mb-1">Vehicle Type</h6>
+            <div class="form-floating">
+                    <select class="form-select" id="Typevehicle" required>
+                    <option disabled selected>Select Type</option>
+                    <option>Car</option>
+                    <option>Motorcycle</option>
+                </select>
+                    <small id="vehicleTypeError" class="text-danger d-none">Please select a vehicle type.</small>
                     <label for="Typevehicle">Type of Vehicle</label>
-                </div>
             </div>
-
-            <!-- Seat Type Selection -->
-            <div class="mb-3">
-                <div class="form-floating">
-                    <select class="form-select" id="rideType">
-                        <option disabled selected>Select Type</option>
-                        @*   <option value="1-seater">1-seater</option>
-                        <option value="4-seater">4-seater</option>
-                        <option value="6-seater">6-seater</option> *@
-                    </select>
-                    <label for="rideType">Seat Type</label>
-                </div>
-            </div>
-
-            <!-- Rate Info Section -->
-            <div class="row text-center">
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Base Fare:</strong><br /> <span id="baseFare">₱</span></p>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Km:</strong><br /> <span id="perKm">₱/km</span></p>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <p class="mb-0"><strong>Per Min:</strong><br /> <span id="perMinute">₱/min</span></p>
-                </div>
-            </div>
-
-            <!-- Pickup and Dropoff Information -->
-            <div class="mb-3">
-                <h6><strong>Pickup:</strong> <span id="pickupLocationDisplay">N/A</span></h6>
-                <h6><strong>Dropoff:</strong> <span id="dropoffLocationDisplay">N/A</span></h6>
-            </div>
-            <div class="mb-3">
-                <h6><strong>Pickup Lat:</strong> <span id="pickupLat">N/A</span></h6>
-                <h6><strong>Pickup Long:</strong> <span id="pickupLng">N/A</span></h6>
-                <h6><strong>Dropoff Lat:</strong> <span id="dropoffLat">N/A</span></h6>
-                <h6><strong>Dropoff Long:</strong> <span id="dropoffLng">N/A</span></h6>
-            </div>
-
-            <!-- Distance and Time Information -->
-            <div class="mb-3">
-                <h6><strong>Distance:</strong> <span id="distanceDisplay">N/A</span> </h6>
-                <h6><strong>Estimated Time:</strong> <span id="timeDisplay">N/A</span> </h6>
-            </div>
-
-
-            <!-- Total Fare Calculation -->
-            <div class="text-center mt-3">
-                <h5><strong>Estimated Total Fare:</strong> <span id="totalFare">N/A</span></h5>
-            </div>
-
-
-            <hr>
-
-            <!-- Assigned Driver Details -->
-            <div class="text-center mt-3">
-                <h5><strong>Assign Driver:</strong></h5>
-            </div>
-            <div class="bg-light text-dark p-3 rounded d-flex align-items-center gap-3">
-                <!-- Profile Picture -->
-                <img src="~/lib/women.jpg" alt="Driver Photo" class="rounded-circle" width="60" height="60">
-
-                <!-- Driver Info -->
-                <div>
-                    <h6 class="mb-1"><strong>Juan Dela Cruz</strong></h6>
-                    <p class="mb-0"><strong>Vehicle:</strong> Toyota Vios</p>
-                    <p class="mb-0"><strong>Plate No.:</strong> ABC-1234</p>
-                    <p class="mb-0"><strong>Contact:</strong> 0917-123-4567</p>
-                </div>
-            </div>
-
         </div>
 
+        <!-- Seat Type -->
+        <div class="mb-4">
+            <h6 class="text-muted mb-1">Seat Type</h6>
+            <div class="form-floating">
+                    <select class="form-select" id="rideType" required>
+                    <option disabled selected>Select Type</option>
+                </select>
+                    <small id="seatTypeError" class="text-danger d-none">Please select a seat type.</small>
+                    <label for="rideType">Seat Type</label>
+            </div>
+        </div>
+
+        <!-- Fare Breakdown -->
+        <div class="row text-center mb-4">
+            <h6 class="text-muted mb-2"><i class="fas fa-info-circle me-2"></i>Fare Breakdown</h6>
+            <div class="col">
+                <div class="small text-muted mb-1">Base Fare</div>
+                <div class="fw-semibold"><span id="baseFare">0</span></div>
+            </div>
+            <div class="col">
+                <div class="small text-muted mb-1">Per KM</div>
+                <div class="fw-semibold"><span id="perKm">0</span></div>
+            </div>
+            <div class="col">
+                <div class="small text-muted mb-1">Per Min</div>
+                <div class="fw-semibold"><span id="perMinute">0</span></div>
+            </div>
+        </div>
+        <hr />
+        <!-- Pickup & Dropoff -->
+        <div class="mb-4">
+            <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
+            <div class="fw-medium" id="pickupLocationDisplay">N/A</div>
+        </div>
+
+        <div class="mb-4">
+            <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Dropoff Location</h6>
+            <div class="fw-medium" id="dropoffLocationDisplay">N/A</div>
+        </div>
+
+        <!-- Coordinates -->
+            <div class="row mb-4 d-none">
+            <div class="col-6 small text-muted">
+                <div>Pickup Lat: <span id="pickupLat">N/A</span></div>
+                <div>Pickup Lng: <span id="pickupLng">N/A</span></div>
+            </div>
+            <div class="col-6 small text-muted">
+                <div>Dropoff Lat: <span id="dropoffLat">N/A</span></div>
+                <div>Dropoff Lng: <span id="dropoffLng">N/A</span></div>
+            </div>
+        </div>
+
+        <!-- Distance & Time -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <h6 class="text-muted mb-1"><i class="fas fa-road me-2"></i>Distance</h6>
+                <div class="fw-medium" id="distanceDisplay">N/A</div>
+            </div>
+            <div class="col-6">
+                <h6 class="text-muted mb-1"><i class="fas fa-clock me-2"></i>Est. Time</h6>
+                <div class="fw-medium" id="timeDisplay">N/A</div>
+            </div>
+        </div>
+
+        <!-- Estimated Fare -->
+        <div class="text-center mb-4">
+            <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Estimated Total Fare</h6>
+            <div class="fs-5 fw-semibold text-success"><span id="totalFare">0</span></div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Form Submission -->
         <form method="post" asp-controller="Home" asp-action="Ride" id="bookingForm">
             @Html.AntiForgeryToken()
             <input type="hidden" name="PickupLocation" id="PickupLocationInput">
@@ -199,10 +187,182 @@
             <input type="hidden" name="VehicleSeat" id="VehicleSeatInput">
             <input type="hidden" name="FareSettingsId" id="FareSettingsIdInput">
 
-            <button type="button" class="btn btn-dark" onclick="submitBooking()">Book</button>
+            <button type="button" class="btn btn-outline-dark w-100 rounded-pill shadow-sm" onclick="submitBooking()">
+                <i class="fas fa-paper-plane me-2"></i> Book Ride
+            </button>
         </form>
+    </div>
+</div>
+
+}
+@if (ViewBag.ActiveBooking != null &&
+   (ViewBag.ActiveBooking.Status == BookingStatus.Pending ||
+    ViewBag.ActiveBooking.Status == BookingStatus.Accepted ||
+    ViewBag.ActiveBooking.Status == BookingStatus.Started ||
+    ViewBag.ActiveBooking.Status == BookingStatus.Completed) &&
+    ViewBag.ActiveBooking.PaymentStatus == PaymentStatus.Unpaid) // Pending
+{
+    var booking = ViewBag.ActiveBooking;
+
+    <div class="offcanvas offcanvas-end show" tabindex="-1" id="activeBookingModal" data-bs-backdrop="false" data-bs-scroll="true">
+        <div class="offcanvas-header border-bottom py-3">
+            <div>
+                @{
+                    string statusClass = booking.Status switch
+                    {
+                        BookingStatus.Pending => "bg-warning text-dark",
+                        BookingStatus.Accepted => "bg-primary",
+                        BookingStatus.Started => "bg-info text-dark",
+                        BookingStatus.Completed => "bg-success",
+                        BookingStatus.Cancelled => "bg-danger",
+                        _ => "bg-secondary"
+                    };
+                }
+                <h5 class="offcanvas-title fw-semibold">Current Ride</h5>
+                <span class="badge small @statusClass">Status: @booking.Status</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <div class="mb-4">
+                <h6 class="text-muted mb-1"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
+                <div class="fw-medium">@booking.PickupLocation</div>
+            </div>
+
+            <div class="mb-4">
+                <h6 class="text-muted mb-1"><i class="fas fa-location-dot text-danger me-2"></i>Dropoff Location</h6>
+                <div class="fw-medium">@booking.DropoffLocation</div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h6 class="text-muted mb-2"><i class="fas fa-car-side me-2"></i>Vehicle Info</h6>
+                    <div><strong>Type:</strong> @booking.VehicleType</div>
+                    <div><strong>Seats:</strong> @booking.VehicleSeat</div>
+                </div>
+                <div class="col-6">
+                    <h6 class="text-muted mb-2"><i class="fas fa-info-circle me-2"></i>Fare Breakdown</h6>
+                    <div>Base Fare: <strong>₱@booking.FareSetting?.BaseFare</strong></div>
+                    <div>Per KM: <strong>₱@booking.FareSetting?.PerKilometerRate</strong></div>
+                    <div>Per Minute: <strong>₱@booking.FareSetting?.PerMinuteRate</strong></div>
+                </div>
+            </div>
+
+            
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h6 class="text-muted mb-1"><i class="fas fa-road me-2"></i>Distance</h6>
+                    <div class="fw-medium">@booking.DistanceInKm km</div>
+                </div>
+                <div class="col-6">
+                    <h6 class="text-muted mb-1"><i class="fas fa-clock me-2"></i>Est. Time</h6>
+                    <div class="fw-medium">@booking.EstimatedTimeInMinutes mins</div>
+                </div>
+            </div>
+            <hr />
+            <div class="mb-4 text-center">
+                <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Estimated Fare</h6>
+                <div class="fs-5 fw-semibold text-success">₱@booking.EstimatedFare</div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="mb-4">
+                <h6 class="text-muted mb-2"><i class="fas fa-user me-2"></i>Assigned Driver</h6>
+
+                @if (booking.Driver != null)
+                {
+                    <div class="d-flex align-items-center mb-3 p-3 bg-light rounded shadow-sm">
+                        <!-- Driver Photo -->
+                        <img src="~/uploads/profilephotos/@booking.Driver.ProfilePhotoPath"
+                             alt="Driver Profile Photo"
+                             class="rounded-circle me-3 shadow-sm border border-dark"
+                             style="width: 60px; height: 60px; object-fit: cover;" />
+
+
+                        <div>
+                            <!-- Driver's Name -->
+                            <div class="fw-semibold text-dark fs-5">
+                                @booking.Driver.FirstName @booking.Driver.LastName
+                            </div>
+
+                            <!-- Driver's Phone Number -->
+                            <small class="text-muted d-block"><i class="fas fa-phone me-1"></i> @booking.Driver.PhoneNumber</small>
+
+                            <!-- Vehicle Model and Plate Number -->
+                            <div class="d-flex mt-2">
+                                <div class="me-3">
+                                    <span class="text-dark mb-1">Model: </span>@booking.Driver.DriverProfile?.VehicleModel
+                                </div>
+                                <div>
+                                    <span class="text-dark mb-1">Plate No: </span>@booking.Driver.DriverProfile?.PlateNumber
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="text-muted">Driver not yet assigned.</div>
+                }
+            </div>
+
+            @if (booking.Status == BookingStatus.Pending)
+            {
+                <form method="post" asp-controller="Home" asp-action="CancelBooking" class="mb-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingId" value="@booking.Id" />
+                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill shadow-sm">
+                        <i class="fas fa-times-circle me-2"></i> Cancel Booking
+                    </button>
+                </form>
+            }
+
+            @if (booking.Status == BookingStatus.Completed && booking.PaymentStatus == PaymentStatus.Unpaid)
+            {
+                <form method="post" asp-controller="" asp-action="" class="mb-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingId" value="@booking.Id" />
+                    <button type="submit" class="btn btn-outline-success w-100 rounded-pill shadow-sm">
+                        <i class="fas fa-money-bill-wave me-2"></i> Pay Now
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <!-- Arrow Pull Handle (Right Side) -->
+    <div id="pullHandle" class="position-fixed top-50 translate-middle-y" style="right: 0; z-index: 1050;">
+        <button type="button"
+                class="btn bg-dark text-white rounded-start-pill px-3 py-2 shadow-sm d-flex align-items-center"
+                data-bs-toggle="offcanvas" data-bs-target="#activeBookingModal" aria-label="Show Current Ride"
+                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+            <i class="fas fa-chevron-left me-2"></i>
+            <span class="d-none d-md-inline">Ride</span>
+        </button>
+    </div>
+    @if (booking.Status == BookingStatus.Pending)
+    {
+        <div class="alert alert-warning text-center mt-4 rounded-3 shadow-sm" role="alert">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Please wait for a driver to accept your request.
+        </div>
+}
+
+
+
+
+
+        }
+
 
     </div>
+
+
+   
 
 
 
@@ -242,3 +402,18 @@
             </text>
         }
     </script>
+
+<script>
+        const offcanvasElement = document.getElementById('activeBookingModal');
+    const pullHandle = document.getElementById('pullHandle');
+
+    if (offcanvasElement && pullHandle) {
+        offcanvasElement.addEventListener('show.bs.offcanvas', function () {
+            pullHandle.style.display = 'none';
+        });
+
+        offcanvasElement.addEventListener('hidden.bs.offcanvas', function () {
+            pullHandle.style.display = 'block';
+        });
+    }
+</script>
