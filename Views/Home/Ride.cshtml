@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Authorization
+﻿﻿@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Passenger")]
 
 <!-- Font Awesome for icons -->
@@ -22,60 +22,71 @@
 <!-- Fullscreen Map -->
 <div id="map" class="position-fixed start-0 w-100" style="top: 85px; bottom: 60px; z-index: 0;"></div>
 
-<div class="position-fixed start-0 w-100 shadow" style="top: 85px; z-index: 2;">
-    <div class="px-3 pb-3 bg-white bg-opacity-75 rounded-bottom" style="max-height: 180px;">
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger" role="alert">
-                @TempData["Error"]
-            </div>
-        }
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success" role="alert">
-                @TempData["Success"]
-            </div>
-        }
+@if (ViewBag.ActiveBooking == null || ViewBag.ActiveBooking.Status != 0) // NOT Pending
+{
+    <div class="position-fixed start-0 w-100 shadow" style="top: 85px; z-index: 2;">
+        <div class="px-3 pb-3 bg-white bg-opacity-75 rounded-bottom" style="max-height: 180px;">
+            <!-- TempData alerts -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger" role="alert">@TempData["Error"]</div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success" role="alert">@TempData["Success"]</div>
+            }
 
-        <h1 class="text-center fs-4 mb-3">Set Destination</h1>
-        <form class="row g-2 justify-content-center">
-            
-            <!-- Pickup and Dropoff Fields -->
-            <div class="col-12 col-md-3 col-lg-3">
-                <div class="form-floating position-relative">
-                    <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup" readonly>
-                    <label for="pickup">Pickup</label>
-                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary" onclick="addPickupPin()">
-                        <i class="fas fa-map-marker-alt fa-lg"></i>
+            <h1 class="text-center fs-4 mb-3">Set Destination</h1>
+
+            <form class="row g-2 justify-content-center">
+                <!-- Pickup -->
+                <div class="col-12 col-md-3 col-lg-3">
+                    <div class="form-floating position-relative">
+                        <input type="text" class="form-control pe-5" id="pickup" placeholder="Pickup" readonly>
+                        <label for="pickup">Pickup</label>
+                        <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-primary" onclick="addPickupPin()">
+                            <i class="fas fa-map-marker-alt fa-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dropoff -->
+                <div class="col-12 col-md-3 col-lg-3">
+                    <div class="form-floating position-relative">
+                        <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off" readonly>
+                        <label for="dropoff">Drop-off</label>
+                        <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger" onclick="addDropoffPin()">
+                            <i class="fas fa-location-dot fa-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Next -->
+                <div class="col-12 col-md-2 col-lg-1">
+                    <button type="button" class="btn btn-dark w-100 py-3 h-100" id="nextBtn" data-bs-toggle="offcanvas" data-bs-target="#sidepass" disabled>
+                        Next
                     </button>
                 </div>
+            </form>
+
+            <!-- Floating Button -->
+            <button type="button" class="btn btn-dark rounded-circle shadow position-fixed"
+                    style="bottom: 20px; right: 20px; z-index: 1050;"
+                    data-bs-toggle="offcanvas" data-bs-target="#sidepass" aria-controls="sidepass">
+                <i class="fas fa-car"></i>
+            </button>
+        </div>
+    </div>
+}
+        @if (ViewBag.ActiveBooking != null && ViewBag.ActiveBooking.Status == 0) // Pending
+        {
+            <div class="alert alert-info text-center mt-3" role="alert">
+                You have a pending booking. Please wait for a driver to accept your request.
             </div>
+        }
 
-            <div class="col-12 col-md-3 col-lg-3">
-                <div class="form-floating position-relative">
-                    <input type="text" class="form-control pe-5" id="dropoff" placeholder="Drop-off" readonly>
-                    <label for="dropoff">Drop-off</label>
-                    <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 text-danger" onclick="addDropoffPin()">
-                        <i class="fas fa-location-dot fa-lg"></i>
-                    </button>
-                </div>
-            </div>
 
-            <div class="col-12 col-md-2 col-lg-1">
-                <button type="button" class="btn btn-dark w-100 py-3 h-100" id="nextBtn" data-bs-toggle="offcanvas" data-bs-target="#sidepass" disabled>
-                    Next
-                </button>
-            </div>
-        </form>
-
-        <!-- Floating Button -->
-<button type="button" class="btn btn-dark rounded-circle shadow position-fixed" 
-        style="bottom: 20px; right: 20px; z-index: 1050;"
-        data-bs-toggle="offcanvas" data-bs-target="#sidepass" aria-controls="sidepass">
-    <i class="fas fa-car"></i>
-</button>
-
-</div>
+    </div>
 
 
     <!-- Sidebar Next -->
@@ -106,7 +117,7 @@
                 <div class="form-floating">
                     <select class="form-select" id="rideType">
                         <option disabled selected>Select Type</option>
-                      @*   <option value="1-seater">1-seater</option>
+                        @*   <option value="1-seater">1-seater</option>
                         <option value="4-seater">4-seater</option>
                         <option value="6-seater">6-seater</option> *@
                     </select>
@@ -193,7 +204,7 @@
 
     </div>
 
- 
+
 
     <!-- Your custom map logic -->
     <script src="~/js/map - v3.js"></script>

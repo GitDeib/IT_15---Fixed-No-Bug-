@@ -25,7 +25,15 @@
             <p><strong>Name:</strong> @Model.Driver.ApplicationUser.FullName</p> <!-- Updated to use UserName -->
             <p>
                 <strong>Status:</strong>
-                <span class="badge bg-success">Verified</span>
+                @if (Model.Driver.Status == "Verified")
+                {
+                    <span class="badge bg-success">Verified</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Not Verified</span>
+                }
+
             </p>
             <p><strong>License No.:</strong> D12345678</p>
             <p><strong>Vehicle:</strong> Toyota Vios</p>
@@ -41,7 +49,7 @@
                 {
                     <span class="text-warning">&#9733;</span>
                 }
-                <<p class="mt-2">
+                <p class="mt-2">
                     @(Model.CurrentRide?.RatingsReviews?.Any() == true ?
                         Model.CurrentRide.RatingsReviews.Average(r => r.Rating).ToString("F1") :
                         "No Rating")
@@ -89,46 +97,50 @@
             </script>
 
             <hr>
-                    <!-- Current Ride Info -->
-                <div class="card bg-light p-3 mb-2">
-                    <h5 class="card-title">Current Ride</h5>
+            <!-- Current Ride Info -->
+            <div class="card bg-light p-3 mb-2">
+                <h5 class="card-title">Current Ride</h5>
 
-                    @if (Model.CurrentRide != null)
-                    {
-                        <p><strong>Passenger:</strong> @Model.CurrentRide.User?.FullName</p>
-                        <p><strong>Pickup:</strong> @Model.CurrentRide.PickupLocation</p>
-                        <p><strong>Destination:</strong> @Model.CurrentRide.DropoffLocation</p>
-                        <p><strong>Vehicle Type:</strong> @Model.CurrentRide.VehicleType</p>
-                        <p><strong>Estimated Fare:</strong> ₱@Model.CurrentRide.EstimatedFare.ToString("F2")</p>
+                @if (Model.AcceptedRide != null)
+                {
+                    <p><strong>Passenger:</strong> @Model.AcceptedRide.User?.FullName</p>
+                    <p><strong>Pickup:</strong> @Model.AcceptedRide.PickupLocation</p>
+                    <p><strong>Destination:</strong> @Model.AcceptedRide.DropoffLocation</p>
+                    <p><strong>Vehicle Type:</strong> @Model.AcceptedRide.VehicleType</p>
+                    <p><strong>Estimated Fare:</strong> ₱@Model.AcceptedRide.EstimatedFare.ToString("F2")</p>
 
-                        @if (Model.CurrentRide.Status == IT15_Project.Models.BookingStatus.Accepted)
-                        {
-                            <div class="d-flex justify-content-center gap-2 mt-2">
-                                <form asp-action="CompleteRide" method="post">
-                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
-                                    <button type="submit" class="btn btn-success btn-sm">Picked Up</button>
-                                </form>
-                                <form asp-action="CancelRide" method="post">
-                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
-                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                                </form>
-                            </div>
-                        }
-                        else if (Model.CurrentRide.Status == IT15_Project.Models.BookingStatus.Started)
-                        {
-                            <div class="d-flex justify-content-center gap-2 mt-2">
-                                <form asp-action="MarkComplete" method="post">
-                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
-                                    <button type="submit" class="btn btn-primary btn-sm">Complete Ride</button>
-                                </form>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-muted">No active ride at the moment.</p>
-                    }
-                </div>
+                    <div class="d-flex justify-content-center gap-2 mt-2">
+                        <form asp-action="CompleteRide" method="post">
+                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Picked Up</button>
+                        </form>
+                        <form asp-action="CancelRide" method="post">
+                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                    </div>
+                }
+                else if (Model.StartedRide != null)
+                {
+                    <p><strong>Passenger:</strong> @Model.StartedRide.User?.FullName</p>
+                    <p><strong>Pickup:</strong> @Model.StartedRide.PickupLocation</p>
+                    <p><strong>Destination:</strong> @Model.StartedRide.DropoffLocation</p>
+                    <p><strong>Vehicle Type:</strong> @Model.StartedRide.VehicleType</p>
+                    <p><strong>Estimated Fare:</strong> ₱@Model.StartedRide.EstimatedFare.ToString("F2")</p>
+
+                    <div class="d-flex justify-content-center gap-2 mt-2">
+                        <form asp-action="MarkComplete" method="post">
+                            <input type="hidden" name="bookingId" value="@Model.StartedRide.Id" />
+                            <button type="submit" class="btn btn-primary btn-sm">Complete Ride</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No active ride at the moment.</p>
+                }
+            </div>
+
 
  
         </div>
@@ -136,21 +148,35 @@
         <!-- Right Column: Available Passengers -->
         <div class="col-md-3 bg-light p-4">
             <h4 class="mb-3">Available Passengers</h4>
+            @if (Model.Driver.Status != "Verified")
+            {
+                <div class="alert alert-warning">
+                    You must be verified to accept bookings.
+                </div>
+            }
             <div class="list-group">
                 @foreach (var passenger in Model.AvailablePassengers)
                 {
                     <div class="list-group-item glass-panel mb-3">
-                        <p><strong>Passenger:</strong> @passenger.User?.FullName</p> <!-- Updated to use UserName -->
+                        <p><strong>Passenger:</strong> @passenger.User?.FullName</p>
                         <p><small>Pickup: @passenger.PickupLocation</small></p>
                         <p><small>Destination: @passenger.DropoffLocation</small></p>
                         <p><small>Seats: @passenger.VehicleSeat | Time: @passenger.RequestedAt.ToString("hh:mm tt")</small></p>
-                        
-                        <form asp-action="AcceptBooking" asp-controller="Home" method="post">
-                            <input type="hidden" name="bookingId" value="@passenger.Id" />
-                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
-                        </form>
+
+                        @if (Model.Driver.Status == "Verified")
+                        {
+                            <form asp-action="AcceptBooking" asp-controller="Home" method="post">
+                                <input type="hidden" name="bookingId" value="@passenger.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Accept (Verify First)</button>
+                        }
                     </div>
                 }
+
             </div>
         </div>
     </div>

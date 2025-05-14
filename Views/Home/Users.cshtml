@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Authorization
+﻿﻿@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Admin")]
 
 @model IT15_Project.Models.UserManagementViewModel
@@ -79,12 +79,12 @@
                                 _ => "bg-secondary text-white"
                             };
 
-                        <tr>
-                            <td class="d-flex align-items-center">
-                                        <img src="@profilePath"
+                            <tr>
+                                <td class="d-flex align-items-center">
+                                    <img src="@profilePath"
                                          alt="@($"{user?.FirstName} {user?.LastName}")"
                                          class="rounded-circle border border-3 border-dark me-2" width="50" height="50">
-                                <div>
+                                    <div>
                                         <div>@($"{user?.FirstName} {user?.MiddleName} {user?.LastName}")</div>
                                         <button class="btn btn-sm hover-dark"
                                                 data-bs-toggle="modal"
@@ -92,22 +92,22 @@
                                                 title="View Profile">
                                             <i class="bi bi-eye"></i> View Profile
                                         </button>
-                                </div>
-                            </td>
+                                    </div>
+                                </td>
                                 <td>@driver.VehicleType</td>
                                 <td>@driver.VehicleSeat</td>
                                 <td>@driver.VehicleModel</td>
                                 <td class=""><span class="badge @statusClass">@driver.Status</span></td>
-                            <td>
+                                <td>
                                     <button class="btn btn-sm btn-outline-success"
                                             data-bs-toggle="modal"
                                             data-bs-target="#verifyModal-@driver.Id"
                                             title="Approve/Reject"
-                                        @(driver.Status == "Verified" ? "disabled" : "")>
+                                    @(driver.Status == "Verified" ? "disabled" : "")>
                                         <i class="bi bi-check-circle"></i> Approve/Reject
                                     </button>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
 
                             <!-- Driver Profile Modal -->
                             <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@($"{modalId}_Label")" aria-hidden="true">
@@ -289,11 +289,11 @@
                                 _ => "bg-secondary text-white"
                             };
 
-                        <tr>
-                             <td class="d-flex align-items-center">
+                            <tr>
+                                <td class="d-flex align-items-center">
                                     <img src="@profilePath"
                                          alt="@($"{passenger?.FirstName} {passenger?.LastName}")"
-                                     class="rounded-circle border border-3 border-dark me-2" width="50" height="50">
+                                         class="rounded-circle border border-3 border-dark me-2" width="50" height="50">
                                     <div>
                                         <div>@($"{passenger.FirstName} {passenger.MiddleName} {passenger.LastName}")</div>
                                         <button class="btn btn-sm hover-dark"
@@ -303,10 +303,10 @@
                                             <i class="bi bi-eye"></i> View Profile
                                         </button>
                                     </div>
-                            </td>
-                            <td>@passenger.Email</td>
-                            <td>@passenger.PhoneNumber</td>
-                            <td>@passenger.CreatedAt</td>
+                                </td>
+                                <td>@passenger.Email</td>
+                                <td>@passenger.PhoneNumber</td>
+                                <td>@passenger.CreatedAt</td>
                                 <td class="">
                                     <span class="badge @emailStatusClass">
                                         @(passenger.EmailConfirmed ? "Email Confirmed" : "Email Not Confirmed")
@@ -321,7 +321,7 @@
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
-                        </tr>
+                            </tr>
                             <!-- Delete Modal -->
                             <div class="modal fade" id="confirmDeleteModal-@passenger.Id" tabindex="-1" aria-labelledby="confirmDeleteLabel-@passenger.Id" aria-hidden="true">
                                 <div class="modal-dialog">
@@ -407,7 +407,7 @@
                                 </div>
                             </div>
 
-                        }                        
+                        }
                     </tbody>
                 </table>
             </div>

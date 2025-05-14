@@ -78,7 +78,7 @@ namespace IT15_Project.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Drivers");
+                    b.ToTable("Drivers", (string)null);
                 });
 
             modelBuilder.Entity("IT15_Project.Models.ApplicationUser", b =>
@@ -253,7 +253,7 @@ namespace IT15_Project.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("IT15_Project.Models.FareSetting", b =>
@@ -292,7 +292,7 @@ namespace IT15_Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FareSettings");
+                    b.ToTable("FareSettings", (string)null);
 
                     b.HasData(
                         new
@@ -367,7 +367,7 @@ namespace IT15_Project.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("RatingReviews");
+                    b.ToTable("RatingReviews", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

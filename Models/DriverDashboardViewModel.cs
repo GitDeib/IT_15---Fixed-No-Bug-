@@ -9,5 +9,7 @@
         public bool IsAvailable { get; set; }
         public FareSetting FareSetting { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
+        public Booking AcceptedRide { get; set; }
+        public Booking StartedRide { get; set; }
     }
 }

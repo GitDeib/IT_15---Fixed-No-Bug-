@@ -22,5 +22,6 @@ namespace IT15_Project.Models
         // Navigation: One-to-One with Driver
         public virtual Driver DriverProfile { get; set; }
 
+
     }
 }

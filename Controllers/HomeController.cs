@@ -1,4 +1,4 @@
-using IT15_Project.Data;
+﻿using IT15_Project.Data;
 using IT15_Project.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -33,8 +33,8 @@ namespace IT15_Project.Controllers
             _emailSender = emailSender;
 
         }
-//-------------------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------
         /*Passenger Routes*/
         /*Passenger Landing*/
         [Authorize(Roles = "Passenger")]
@@ -77,6 +77,7 @@ namespace IT15_Project.Controllers
             return View();
         }
 
+
         public async Task<IActionResult> GetFareDetails(string seatType)
         {
             if (string.IsNullOrEmpty(seatType))
@@ -99,6 +100,7 @@ namespace IT15_Project.Controllers
                 PerMinuteRate = fareSetting.PerMinuteRate
             });
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Ride(Booking model)
@@ -137,6 +139,8 @@ namespace IT15_Project.Controllers
 
             return RedirectToAction("Ride");
         }
+
+
 
 
         [Authorize(Roles = "Passenger")]
@@ -230,7 +234,7 @@ namespace IT15_Project.Controllers
             We regret to inform you that your application to become a driver has been <strong>rejected</strong>.<br><br>
             <b>Reason:</b> {HtmlEncoder.Default.Encode(RejectionReason ?? "Not specified")}<br><br>
             Thank you for your interest.<br><br>
-            � SundoGo";
+            — SundoGo";
 
                 await _emailSender.SendEmailAsync(user.Email, subject, message);
             }
@@ -246,7 +250,7 @@ namespace IT15_Project.Controllers
             Hi {user.FirstName},<br><br>
             Congratulations! Your application has been <strong>approved</strong> and your account is now verified.<br><br>
             You can now log in and start accepting bookings.<br><br>
-            � SundoGo";
+            — SundoGo";
 
                 await _emailSender.SendEmailAsync(user.Email, subject, message);
             }
@@ -354,67 +358,98 @@ namespace IT15_Project.Controllers
         public IActionResult RateReview() => View();
 
 
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeactivateUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTimeOffset.MaxValue;
+
+            await _userManager.UpdateAsync(user);
+            TempData["Message"] = "User account has been deactivated.";
+
+            return RedirectToAction("Users"); // Replace with your actual view name
+        }*/
+
+
+
         //-------------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------
-     [Authorize(Roles = "Driver")]
-    public async Task<IActionResult> Driver()
-    {
-        var userId = _userManager.GetUserId(User);
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> Driver()
+        {
+            var userId = _userManager.GetUserId(User);
 
-        var driver = await _context.Drivers
-            .Include(d => d.ApplicationUser)
-            .FirstOrDefaultAsync(d => d.UserId == userId);
+            var driver = await _context.Drivers
+                .Include(d => d.ApplicationUser)
+                .FirstOrDefaultAsync(d => d.UserId == userId);
 
-        if (driver == null)
-            return NotFound("Driver not found.");
+            if (driver == null)
+                return NotFound("Driver not found.");
 
-        var fareSetting = await _context.FareSettings.FirstOrDefaultAsync();
+            var fareSetting = await _context.FareSettings.FirstOrDefaultAsync();
 
-        var currentRide = await _context.Bookings
-            .Include(b => b.User)
-            .Include(b => b.RatingsReviews)
-            .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Accepted);
+            var acceptedRide = await _context.Bookings
+                 .Include(b => b.User)
+                 .Include(b => b.RatingsReviews)
+                 .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Accepted);
 
+            var startedRide = await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.RatingsReviews)
+                .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Started);
 
-
-        var availablePassengers = await _context.Bookings
-            .Include(b => b.User)
-            .Where(b => b.Status == BookingStatus.Pending)
-            .ToListAsync();
+            // 🛠️ Filter pending bookings based on the driver's seat type
+            var availablePassengers = await _context.Bookings
+                .Include(b => b.User)
+                .Where(b => b.Status == BookingStatus.Pending && b.VehicleSeat == driver.VehicleSeat)
+                .ToListAsync();
 
             var model = new DriverDashboardViewModel
             {
                 Driver = driver,
                 FareSetting = fareSetting,
-                CurrentRide = currentRide, //  This is just a Booking object
+                AcceptedRide = acceptedRide,
+                StartedRide = startedRide,
                 AvailablePassengers = availablePassengers,
                 IsAvailable = driver.Status == "Available"
             };
 
-
             return View(model);
+        }
+
+       [HttpPost]
+[Authorize(Roles = "Driver")]
+public async Task<IActionResult> AcceptBooking(int bookingId)
+{
+    var userId = _userManager.GetUserId(User);
+
+    var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.UserId == userId);
+    if (driver == null)
+        return NotFound("Driver not found.");
+
+    // ✅ Check if the driver is verified
+    if (driver.Status != "Verified")
+    {
+        TempData["Error"] = "Your account is not verified. You cannot accept bookings.";
+        return RedirectToAction("Driver");
     }
 
-        [HttpPost]
-        [Authorize(Roles = "Driver")]
-        public async Task<IActionResult> AcceptBooking(int bookingId)
-        {
-            var userId = _userManager.GetUserId(User);
+    var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
+    if (booking == null)
+        return NotFound("Booking not found.");
 
-            var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.UserId == userId);
-            if (driver == null)
-                return NotFound("Driver not found.");
+    booking.Status = BookingStatus.Accepted; // Set to Accepted (1)
+    booking.DriverId = userId;
 
-            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
-            if (booking == null)
-                return NotFound("Booking not found.");
+    await _context.SaveChangesAsync();
+    return RedirectToAction("Driver");
+}
 
-            booking.Status = BookingStatus.Accepted; // Set to Accepted (1)
-            booking.DriverId = userId;
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Driver");
-        }
         [HttpPost]
         [Authorize(Roles = "Driver")]
         public async Task<IActionResult> CompleteRide(int bookingId)
@@ -423,19 +458,13 @@ namespace IT15_Project.Controllers
             if (booking == null)
                 return NotFound();
 
-            // If the ride is in Accepted status, mark it as Started
-            if (booking.Status == BookingStatus.Accepted)
-            {
-                booking.Status = BookingStatus.Started;
-                booking.StartedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
+            booking.Status = BookingStatus.Started;
+            booking.StartedAt = DateTime.UtcNow;
 
-            // Optionally, if you're handling Completed state, you can mark it here
-            // booking.Status = BookingStatus.Completed;
-
+            await _context.SaveChangesAsync();
             return RedirectToAction("Driver");
         }
+
 
         [HttpPost]
         [Authorize(Roles = "Driver")]
@@ -451,7 +480,28 @@ namespace IT15_Project.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Driver");
         }
+        [HttpPost]
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> MarkComplete(int bookingId)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+            if (booking == null)
+                return NotFound();
+
+            booking.Status = BookingStatus.Completed;
+            booking.CompletedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            // ✅ Set TempData message
+            TempData["RideMessage"] = "Booking completed successfully!";
+
+            return RedirectToAction("Driver");
+        }
+
+
 
     }
+
 
 }
