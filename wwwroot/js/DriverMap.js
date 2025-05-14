@@ -95,21 +95,7 @@ if (navigator.geolocation) {
 // Directions Setup
 // ========================
 
-// Create a Directions client
-// Define passenger pickup and destination
-const pickupCoords = [125.6131, 7.0659]; // Replace with real pickup
-const destinationCoords = [125.6151, 7.0709]; // Replace with real destination
 
-// Add static markers
-new mapboxgl.Marker({ color: 'blue' })
-    .setLngLat(pickupCoords)
-    .setPopup(new mapboxgl.Popup().setText('Passenger Pickup'))
-    .addTo(map);
-
-new mapboxgl.Marker({ color: 'red' })
-    .setLngLat(destinationCoords)
-    .setPopup(new mapboxgl.Popup().setText('Passenger Destination'))
-    .addTo(map);
 
 // Create a non-interactive directions route between pickup and destination
 const directions = new MapboxDirections({
@@ -119,7 +105,7 @@ const directions = new MapboxDirections({
     interactive: false,
     controls: {
         inputs: false,
-        instructions: true,
+        instructions: false,
         profileSwitcher: false
     }
 });

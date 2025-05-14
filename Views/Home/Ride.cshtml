@@ -198,4 +198,36 @@
     <!-- Your custom map logic -->
     <script src="~/js/map - v3.js"></script>
 
-   
+    <script>
+        // Initialize map with active booking if exists
+        @if (ViewBag.ActiveBooking != null)
+        {
+            var booking = ViewBag.ActiveBooking;
+            <text>
+                map.on('load', function () {
+                    // Set pickup and dropoff markers
+                    const pickupMarker = new mapboxgl.Marker({ color: 'blue' })
+                        .setLngLat([@booking.PickupLongitude, @booking.PickupLatitude])
+                        .addTo(map);
+
+                    const dropoffMarker = new mapboxgl.Marker({ color: 'red' })
+                        .setLngLat([@booking.DropoffLongitude, @booking.DropoffLatitude])
+                        .addTo(map);
+
+                    // Set route
+                    directions.setOrigin([@booking.PickupLongitude, @booking.PickupLatitude]);
+                    directions.setDestination([@booking.DropoffLongitude, @booking.DropoffLatitude]);
+
+                    // Fit map to show both markers
+                    const bounds = new mapboxgl.LngLatBounds();
+                    bounds.extend([@booking.PickupLongitude, @booking.PickupLatitude]);
+                    bounds.extend([@booking.DropoffLongitude, @booking.DropoffLatitude]);
+                    map.fitBounds(bounds, { padding: 50 });
+
+                    // Show the active booking modal by default
+                    const activeBookingModal = new bootstrap.Offcanvas(document.getElementById('activeBookingModal'));
+                    activeBookingModal.show();
+                });
+            </text>
+        }
+    </script>

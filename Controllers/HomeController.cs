@@ -54,7 +54,28 @@ namespace IT15_Project.Controllers
 
         /*Passenger Routes*/
         [Authorize(Roles = "Passenger")]
-        public IActionResult Ride() => View();
+        public async Task<IActionResult> Ride()
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index");
+            }
+
+            // Get active booking if exists
+            var activeBooking = await _context.Bookings
+                .Include(b => b.Driver)
+                .Where(b => b.UserId == userId &&
+                    (b.Status == BookingStatus.Pending ||
+                     b.Status == BookingStatus.Accepted ||
+                     b.Status == BookingStatus.Started ||
+                     (b.Status == BookingStatus.Completed && b.PaymentStatus == PaymentStatus.Unpaid)))
+                .OrderByDescending(b => b.RequestedAt)
+                .FirstOrDefaultAsync();
+
+            ViewBag.ActiveBooking = activeBooking;
+            return View();
+        }
 
         public async Task<IActionResult> GetFareDetails(string seatType)
         {

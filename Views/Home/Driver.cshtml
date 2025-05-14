@@ -3,14 +3,6 @@
 @model DriverDashboardViewModel
 @using IT15_Project.Models;
 
-<style>
-    /* Default style (visible instructions) */
-    .directions-control.directions-control-instructions {
-        transition: all 0.3s ease;
-        max-width: 150px !important;
-    }
-</style>
-
 
 <!-- Mapbox -->
 <link href="https://api.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet" />
@@ -103,7 +95,7 @@
 
                     @if (Model.CurrentRide != null)
                     {
-                        <p><strong>Passenger:</strong> @Model.CurrentRide.User?.UserName</p>
+                        <p><strong>Passenger:</strong> @Model.CurrentRide.User?.FullName</p>
                         <p><strong>Pickup:</strong> @Model.CurrentRide.PickupLocation</p>
                         <p><strong>Destination:</strong> @Model.CurrentRide.DropoffLocation</p>
                         <p><strong>Vehicle Type:</strong> @Model.CurrentRide.VehicleType</p>
@@ -148,7 +140,7 @@
                 @foreach (var passenger in Model.AvailablePassengers)
                 {
                     <div class="list-group-item glass-panel mb-3">
-                        <p><strong>Name:</strong> @passenger.User?.UserName</p> <!-- Updated to use UserName -->
+                        <p><strong>Passenger:</strong> @passenger.User?.FullName</p> <!-- Updated to use UserName -->
                         <p><small>Pickup: @passenger.PickupLocation</small></p>
                         <p><small>Destination: @passenger.DropoffLocation</small></p>
                         <p><small>Seats: @passenger.VehicleSeat | Time: @passenger.RequestedAt.ToString("hh:mm tt")</small></p>
