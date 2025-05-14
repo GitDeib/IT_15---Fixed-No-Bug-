@@ -10,6 +10,8 @@ namespace IT15_Project.Models
 
         public string LastName { get; set; } = "";
 
+        public string FullName => $"{FirstName} {LastName}";
+
         public string Address { get; set; } = "";
 
         public string? ProfilePhotoPath { get; set; } 

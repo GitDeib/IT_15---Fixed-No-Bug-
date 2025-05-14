@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Driver")]
+@model DriverDashboardViewModel
+@using IT15_Project.Models;
 
 <style>
     /* Default style (visible instructions) */
@@ -27,8 +29,8 @@
         <div class="col-md-3 bg-light p-4">
             <h4 class="mb-3">Driver Details</h4>
             <!-- Profile Picture -->
-            <img src="~/lib/women.jpg" alt="Driver Photo" class="rounded-circle" width="100" height="100">
-            <p><strong>Name:</strong> Juan Dela Cruz</p>
+            <img src="~/uploads/drivers/@Model.Driver.ApplicationUser.ProfilePhotoPath"  class="rounded-circle" width="100" height="100">
+            <p><strong>Name:</strong> @Model.Driver.ApplicationUser.FullName</p> <!-- Updated to use UserName -->
             <p>
                 <strong>Status:</strong>
                 <span class="badge bg-success">Verified</span>
@@ -39,30 +41,34 @@
 
             <hr>
 
-            <!-- Moved Rating Section -->
+            <!-- Rating Section -->
             <h4 class="mt-4">Rating</h4>
             <div class="mb-4">
-                <span class="text-warning">&#9733;</span>
-                <span class="text-warning">&#9733;</span>
-                <span class="text-warning">&#9733;</span>
-                <span class="text-warning">&#9733;</span>
-                <span class="text-secondary">&#9734;</span>
-                <p class="mt-2">4.0 out of 5</p>
+                <!-- Example of dynamic rating -->
+                @for (int i = 0; i < 5; i++)
+                {
+                    <span class="text-warning">&#9733;</span>
+                }
+                <<p class="mt-2">
+                    @(Model.CurrentRide?.RatingsReviews?.Any() == true ?
+                        Model.CurrentRide.RatingsReviews.Average(r => r.Rating).ToString("F1") :
+                        "No Rating")
+                    out of 5
+                </p>
             </div>
             <hr>
 
-            <!-- 💸 Payout Request Section -->
+            <!-- Payout Request Section -->
             <h4 class="mt-4">Payout Request</h4>
             <div class="mb-3">
-                <p><strong>Available Balance:</strong> ₱15,000.00</p>
-                <p><strong>Current Thresshold</strong> ₱1,000.00</p>
-                <p><strong>Monthly Thresshold:</strong> ₱20,000.00</p>
+                <p><strong>Base Fare:</strong> ₱@Model.FareSetting?.BaseFare ?? 0</p> <!-- Updated to handle null values -->
+                <p><strong>Per Kilometer Rate:</strong> ₱@Model.FareSetting?.PerKilometerRate ?? 0</p>
+                <p><strong>Per Minute Rate:</strong> ₱@Model.FareSetting?.PerMinuteRate ?? 0</p>
 
                 <button class="btn btn-outline-primary btn-sm">Request Payout</button>
             </div>
 
         </div>
-
 
         <!-- Center Column: Wallet & Current Ride -->
         <div class="col-md-6 p-4 text-center">
@@ -70,11 +76,11 @@
                 <h5 class="card-title">Driver's Available Balance</h5>
                 <div class="d-flex align-items-center justify-content-center">
                     <img src="~/lib/GIF/profit.gif" alt="KM" style="width: 50px; height: 50px;">
-                    <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱15,000.00</p>
+                    <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱@Model.CurrentRide?.EstimatedFare ?? 0</p> <!-- Updated to handle null values -->
                 </div>
             </div>
 
-            <!-- 🗺️ Map Placeholder -->
+            <!-- Map Placeholder -->
             <div id="map" class="mb-4" style="height: 300px; width: 100%; border: 2px solid #ccc; border-radius: 10px;">
                 <!-- Map will be rendered here by JS -->
             </div>
@@ -91,38 +97,68 @@
             </script>
 
             <hr>
+                    <!-- Current Ride Info -->
+                <div class="card bg-light p-3 mb-2">
+                    <h5 class="card-title">Current Ride</h5>
 
-            <!-- Current Ride Info -->
-            <div class="card bg-light p-3 mb-2">
-                <h5 class="card-title">Current Ride</h5>
-                <p><strong>Passenger:</strong> Maria S.</p>
-                <p><small>Pickup: Gaisano Mall, Bajada</small></p>
-                <p><small>Destination: SM Lanang</small></p>
-                <div class="d-flex justify-content-center gap-2">
-                    <button class="btn btn-sm btn-success">Picked Up</button>
-                    <button class="btn btn-sm btn-danger">Cancel</button>
+                    @if (Model.CurrentRide != null)
+                    {
+                        <p><strong>Passenger:</strong> @Model.CurrentRide.User?.UserName</p>
+                        <p><strong>Pickup:</strong> @Model.CurrentRide.PickupLocation</p>
+                        <p><strong>Destination:</strong> @Model.CurrentRide.DropoffLocation</p>
+                        <p><strong>Vehicle Type:</strong> @Model.CurrentRide.VehicleType</p>
+                        <p><strong>Estimated Fare:</strong> ₱@Model.CurrentRide.EstimatedFare.ToString("F2")</p>
+
+                        @if (Model.CurrentRide.Status == IT15_Project.Models.BookingStatus.Accepted)
+                        {
+                            <div class="d-flex justify-content-center gap-2 mt-2">
+                                <form asp-action="CompleteRide" method="post">
+                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm">Picked Up</button>
+                                </form>
+                                <form asp-action="CancelRide" method="post">
+                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                            </div>
+                        }
+                        else if (Model.CurrentRide.Status == IT15_Project.Models.BookingStatus.Started)
+                        {
+                            <div class="d-flex justify-content-center gap-2 mt-2">
+                                <form asp-action="MarkComplete" method="post">
+                                    <input type="hidden" name="bookingId" value="@Model.CurrentRide.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Complete Ride</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No active ride at the moment.</p>
+                    }
                 </div>
-            </div>
+
+ 
         </div>
 
         <!-- Right Column: Available Passengers -->
         <div class="col-md-3 bg-light p-4">
             <h4 class="mb-3">Available Passengers</h4>
             <div class="list-group">
-                <div class="list-group-item glass-panel mb-3">
-                    <p><strong>Name:</strong> Maria S.</p>
-                    <p><small>Pickup: Gaisano Mall, Bajada</small></p>
-                    <p><small>Destination: SM Lanang</small></p>
-                    <p><small>Seats: 1 | Time: 1:21 mins ago</small></p>
-                    <button class="btn btn-sm btn-success">Accept</button>
-                </div>
-                <div class="list-group-item glass-panel mb-3">
-                    <p><strong>Name:</strong> Carlo D.</p>
-                    <p><small>Pickup: SM Lanang</small></p>
-                    <p><small>Destination: Gaisano Mall</small></p>
-                    <p><small>Seats: 2 | Time: 1:01 mins ago</small></p>
-                    <button class="btn btn-sm btn-success">Accept</button>
-                </div>
+                @foreach (var passenger in Model.AvailablePassengers)
+                {
+                    <div class="list-group-item glass-panel mb-3">
+                        <p><strong>Name:</strong> @passenger.User?.UserName</p> <!-- Updated to use UserName -->
+                        <p><small>Pickup: @passenger.PickupLocation</small></p>
+                        <p><small>Destination: @passenger.DropoffLocation</small></p>
+                        <p><small>Seats: @passenger.VehicleSeat | Time: @passenger.RequestedAt.ToString("hh:mm tt")</small></p>
+                        
+                        <form asp-action="AcceptBooking" asp-controller="Home" method="post">
+                            <input type="hidden" name="bookingId" value="@passenger.Id" />
+                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     </div>

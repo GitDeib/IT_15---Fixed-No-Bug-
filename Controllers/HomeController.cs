@@ -125,6 +125,8 @@ namespace IT15_Project.Controllers
         public IActionResult DriverIntro() => View();
         public IActionResult Privacy() => View();
 
+
+
 //-------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------
 
@@ -331,16 +333,104 @@ namespace IT15_Project.Controllers
         public IActionResult RateReview() => View();
 
 
-//-------------------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------------------
-        /*Driver Routes*/
-        [Authorize(Roles = "Driver")]
-        public IActionResult Driver() => View();
+        //-------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------
+     [Authorize(Roles = "Driver")]
+    public async Task<IActionResult> Driver()
+    {
+        var userId = _userManager.GetUserId(User);
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        var driver = await _context.Drivers
+            .Include(d => d.ApplicationUser)
+            .FirstOrDefaultAsync(d => d.UserId == userId);
+
+        if (driver == null)
+            return NotFound("Driver not found.");
+
+        var fareSetting = await _context.FareSettings.FirstOrDefaultAsync();
+
+        var currentRide = await _context.Bookings
+            .Include(b => b.User)
+            .Include(b => b.RatingsReviews)
+            .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Accepted);
+
+
+
+        var availablePassengers = await _context.Bookings
+            .Include(b => b.User)
+            .Where(b => b.Status == BookingStatus.Pending)
+            .ToListAsync();
+
+            var model = new DriverDashboardViewModel
+            {
+                Driver = driver,
+                FareSetting = fareSetting,
+                CurrentRide = currentRide, //  This is just a Booking object
+                AvailablePassengers = availablePassengers,
+                IsAvailable = driver.Status == "Available"
+            };
+
+
+            return View(model);
     }
+
+        [HttpPost]
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> AcceptBooking(int bookingId)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.UserId == userId);
+            if (driver == null)
+                return NotFound("Driver not found.");
+
+            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
+            if (booking == null)
+                return NotFound("Booking not found.");
+
+            booking.Status = BookingStatus.Accepted; // Set to Accepted (1)
+            booking.DriverId = userId;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Driver");
+        }
+        [HttpPost]
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> CompleteRide(int bookingId)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+            if (booking == null)
+                return NotFound();
+
+            // If the ride is in Accepted status, mark it as Started
+            if (booking.Status == BookingStatus.Accepted)
+            {
+                booking.Status = BookingStatus.Started;
+                booking.StartedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            // Optionally, if you're handling Completed state, you can mark it here
+            // booking.Status = BookingStatus.Completed;
+
+            return RedirectToAction("Driver");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> CancelRide(int bookingId)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+            if (booking == null)
+                return NotFound();
+
+            booking.Status = BookingStatus.Cancelled;
+            booking.DriverId = null; // Free the ride
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Driver");
+        }
+
+    }
+
 }
