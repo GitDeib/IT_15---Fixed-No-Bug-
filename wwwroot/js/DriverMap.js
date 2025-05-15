@@ -73,13 +73,6 @@ if (navigator.geolocation) {
             window.userMarker.setLngLat([lng, lat]);
         }
 
-        // Show static driver marker nearby
-        if (!window.driverMarker) {
-            const driverLng = lng + 0.0015;
-            const driverLat = lat + 0.0010;
-            window.driverMarker = createDriverMarker(driverLng, driverLat);
-        }
-
     }, error => {
         console.error('GPS Error:', error);
     }, {
@@ -91,13 +84,7 @@ if (navigator.geolocation) {
     console.warn('Geolocation not supported by this browser.');
 }
 
-// ========================
 // Directions Setup
-// ========================
-
-
-
-// Create a non-interactive directions route between pickup and destination
 const directions = new MapboxDirections({
     accessToken: mapboxgl.accessToken,
     unit: 'metric',
@@ -113,8 +100,14 @@ const directions = new MapboxDirections({
 // Add the directions control to the map
 map.addControl(directions, 'top-left');
 
-// Automatically set the route
-map.on('load', () => {
-    directions.setOrigin(pickupCoords);
-    directions.setDestination(destinationCoords);
-});
+// Function to update route when accepting a booking
+function updateRouteForBooking(pickupLng, pickupLat, dropoffLng, dropoffLat) {
+    directions.setOrigin([pickupLng, pickupLat]);
+    directions.setDestination([dropoffLng, dropoffLat]);
+
+    // Fit map to show both points
+    const bounds = new mapboxgl.LngLatBounds();
+    bounds.extend([pickupLng, pickupLat]);
+    bounds.extend([dropoffLng, dropoffLat]);
+    map.fitBounds(bounds, { padding: 50 });
+}

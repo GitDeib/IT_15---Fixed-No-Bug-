@@ -35,6 +35,18 @@
     <div class="offcanvas-header bg-white border-bottom py-3">
         <div>
             <h5 class="offcanvas-title fw-semibold text-dark">Ride Details</h5>
+            @if (Model.ActiveBooking != null)
+            {
+                <span class="badge @(Model.ActiveBooking.Status switch {
+                    BookingStatus.Accepted => "bg-warning",
+                    BookingStatus.Started => "bg-primary",
+                    BookingStatus.Completed => Model.ActiveBooking.PaymentStatus == PaymentStatus.Unpaid ? "bg-danger" : "bg-success",
+                    _ => "bg-secondary"
+                })">
+                    @Model.ActiveBooking.Status
+                    @(Model.ActiveBooking.Status == BookingStatus.Completed && Model.ActiveBooking.PaymentStatus == PaymentStatus.Unpaid ? " (Unpaid)" : "")
+                </span>
+            }
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -47,99 +59,100 @@
             </div>
         }
 
-        @if (Model.AcceptedRide != null)
+        @if (Model.ActiveBooking != null)
         {
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                            <i class="fas fa-user text-primary fa-lg"></i>
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <img src="~/uploads/profilephotos/@Model.ActiveBooking.User?.ProfilePhotoPath"
+                                 alt="Passenger Photo"
+                                 class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover;">
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1">Current Ride</h6>
-                            <p class="text-muted mb-0">Passenger: @Model.AcceptedRide.User?.FullName</p>
+                            <p class="text-muted mb-0">Passenger: @Model.ActiveBooking.User?.FullName</p>
+                            <small class="text-muted d-block"><i class="fas fa-phone me-1"></i> @Model.ActiveBooking.User?.PhoneNumber</small>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
-                        <div class="fw-medium">@Model.AcceptedRide.PickupLocation</div>
+                        <div class="fw-medium">@Model.ActiveBooking.PickupLocation</div>
                     </div>
 
                     <div class="mb-4">
                         <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Destination</h6>
-                        <div class="fw-medium">@Model.AcceptedRide.DropoffLocation</div>
+                        <div class="fw-medium">@Model.ActiveBooking.DropoffLocation</div>
                     </div>
 
-                    <div class="row mb-4">
+                    <div class="row mb-3">
                         <div class="col-6">
-                            <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Vehicle Type</h6>
-                            <div class="fw-medium">@Model.AcceptedRide.VehicleType</div>
+                            <h6 class="text-muted mb-1">
+                                <i class="fas fa-road me-2"></i>Distance
+                            </h6>
+                            <div class="fw-medium">@Model.ActiveBooking.DistanceInKm.ToString("0.00") km</div>
                         </div>
+
                         <div class="col-6">
-                            <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Fare</h6>
-                            <div class="fw-medium text-success">₱@Model.AcceptedRide.EstimatedFare.ToString("F2")</div>
+                            <h6 class="text-muted mb-1">
+                                <i class="fas fa-clock me-2"></i>Est. Time
+                            </h6>
+                            <div class="fw-medium">@Model.ActiveBooking.EstimatedTimeInMinutes mins</div>
                         </div>
+
+                        @if (Model.ActiveBooking.Status == BookingStatus.Completed)
+                        {
+                            <div class="col-6 mt-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-clock me-2"></i>Actual Time
+                                </h6>
+                                <div class="fw-medium">@Model.ActiveBooking.ActualTimeInMinutes?.ToString("0.0") mins</div>
+                            </div>
+
+                            <div class="col-6 mt-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-money-bill me-2"></i>Final Fare
+                                </h6>
+                                <div class="fw-medium text-success">₱@Model.ActiveBooking.FinalFare?.ToString("0.00")</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-12 text-center mt-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-money-bill me-2"></i>Estimated Fare
+                                </h6>
+                                <div class="fw-medium text-success">₱@Model.ActiveBooking.EstimatedFare.ToString("0.00")</div>
+                            </div>
+                        }
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <form asp-action="CompleteRide" method="post" class="flex-grow-1">
-                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
+                    @if (Model.ActiveBooking.Status == BookingStatus.Accepted)
+                    {
+                        <form asp-action="StartRide" method="post" class="mb-2">
+                            <input type="hidden" name="bookingId" value="@Model.ActiveBooking.Id" />
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">
+                                <i class="fas fa-play-circle me-2"></i> Start Ride
+                            </button>
+                        </form>
+                    }
+                    else if (Model.ActiveBooking.Status == BookingStatus.Started)
+                    {
+                        <form asp-action="CompleteRide" method="post" class="mb-2">
+                            <input type="hidden" name="bookingId" value="@Model.ActiveBooking.Id" />
                             <button type="submit" class="btn btn-success w-100 rounded-pill shadow-sm">
-                                <i class="fas fa-check-circle me-2"></i> Picked Up
+                                <i class="fas fa-flag-checkered me-2"></i> Complete Ride
                             </button>
                         </form>
-                        <form asp-action="CancelRide" method="post" class="flex-grow-1">
-                            <input type="hidden" name="bookingId" value="@Model.AcceptedRide.Id" />
-                            <button type="submit" class="btn btn-outline-danger w-100 rounded-pill shadow-sm">
-                                <i class="fas fa-times-circle me-2"></i> Cancel
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        }
-        else if (Model.StartedRide != null)
-        {
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
-                            <i class="fas fa-car text-info fa-lg"></i>
+                    }
+                    else if (Model.ActiveBooking.Status == BookingStatus.Completed && Model.ActiveBooking.PaymentStatus == PaymentStatus.Unpaid)
+                    {
+                        <div class="alert alert-warning rounded-3 shadow-sm" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Waiting for passenger payment. Route will remain visible until payment is received.
                         </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Ongoing Ride</h6>
-                            <p class="text-muted mb-0">Passenger: @Model.StartedRide.User?.FullName</p>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i>Pickup Location</h6>
-                        <div class="fw-medium">@Model.StartedRide.PickupLocation</div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h6 class="text-muted mb-2"><i class="fas fa-location-dot text-danger me-2"></i>Destination</h6>
-                        <div class="fw-medium">@Model.StartedRide.DropoffLocation</div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-6">
-                            <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Vehicle Type</h6>
-                            <div class="fw-medium">@Model.StartedRide.VehicleType</div>
-                        </div>
-                        <div class="col-6">
-                            <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Fare</h6>
-                            <div class="fw-medium text-success">₱@Model.StartedRide.EstimatedFare.ToString("F2")</div>
-                        </div>
-                    </div>
-
-                    <form asp-action="MarkComplete" method="post">
-                        <input type="hidden" name="bookingId" value="@Model.StartedRide.Id" />
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">
-                            <i class="fas fa-flag-checkered me-2"></i> Complete Ride
-                        </button>
-                    </form>
+                    }
                 </div>
             </div>
         }
@@ -147,17 +160,41 @@
         {
             <h6 class="fw-bold mb-3">Available Passengers</h6>
 
+            @functions {
+                string GetTimeAgo(DateTime dateTime)
+                {
+                    var timeSpan = DateTime.Now - dateTime;
+
+                    if (timeSpan.TotalSeconds < 60)
+                        return $"{(int)timeSpan.TotalSeconds} secs ago";
+                    if (timeSpan.TotalMinutes < 60)
+                        return $"{(int)timeSpan.TotalMinutes} mins ago";
+                    if (timeSpan.TotalHours < 24)
+                        return $"{(int)timeSpan.TotalHours} hrs ago";
+                    if (timeSpan.TotalDays < 30)
+                        return $"{(int)timeSpan.TotalDays} days ago";
+                    if (timeSpan.TotalDays < 365)
+                        return $"{(int)(timeSpan.TotalDays / 30)} months ago";
+
+                    return $"{(int)(timeSpan.TotalDays / 365)} yrs ago";
+                }
+            }
+
             @foreach (var passenger in Model.AvailablePassengers)
             {
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center mb-3">
                             <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                                <i class="fas fa-user text-success fa-lg"></i>
+                                <img src="~/uploads/profilephotos/@passenger.User?.ProfilePhotoPath"
+                                     alt="Passenger Photo"
+                                     class="rounded-circle"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
                             </div>
+
                             <div>
                                 <h6 class="fw-bold mb-1">@passenger.User?.FullName</h6>
-                                <p class="text-muted mb-0">@passenger.RequestedAt.ToString("hh:mm tt")</p>
+                                <p class="text-muted mb-0">@GetTimeAgo(passenger.RequestedAt)</p>
                             </div>
                         </div>
 
@@ -173,12 +210,24 @@
 
                         <div class="row mb-3">
                             <div class="col-6">
-                                <h6 class="text-muted mb-1"><i class="fas fa-chair me-2"></i>Seats</h6>
-                                <div class="fw-medium">@passenger.VehicleSeat</div>
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-road me-2"></i>Distance
+                                </h6>
+                                <div class="fw-medium">@passenger.DistanceInKm.ToString("0.00") km</div>
                             </div>
+
                             <div class="col-6">
-                                <h6 class="text-muted mb-1"><i class="fas fa-car-side me-2"></i>Type</h6>
-                                <div class="fw-medium">@passenger.VehicleType</div>
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-clock me-2"></i>Est. Time
+                                </h6>
+                                <div class="fw-medium">@passenger.EstimatedTimeInMinutes mins</div>
+                            </div>
+
+                            <div class="col-12 text-center mt-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="fas fa-money-bill me-2"></i>Estimated Fare
+                                </h6>
+                                <div class="fw-medium text-success">₱@passenger.EstimatedFare.ToString("0.00")</div>
                             </div>
                         </div>
 
@@ -186,7 +235,7 @@
                         {
                             <form asp-action="AcceptBooking" asp-controller="Home" method="post">
                                 <input type="hidden" name="bookingId" value="@passenger.Id" />
-                                <button type="submit" class="btn btn-success w-100 rounded-pill shadow-sm">
+                                <button type="submit" class="btn btn-outline-success w-100 rounded-pill shadow-sm">
                                     <i class="fas fa-check-circle me-2"></i> Accept
                                 </button>
                             </form>
@@ -208,6 +257,34 @@
 <script src="~/js/DriverMap.js"></script>
 
 <script>
+    // Initialize map with active booking if exists
+    @if (ViewBag.ActiveBooking != null)
+    {
+        var booking = ViewBag.ActiveBooking;
+        <text>
+            map.on('load', function () {
+                // Set pickup and dropoff markers
+                const pickupMarker = new mapboxgl.Marker({ color: 'blue' })
+                    .setLngLat([@booking.PickupLongitude, @booking.PickupLatitude])
+                    .addTo(map);
+
+                const dropoffMarker = new mapboxgl.Marker({ color: 'red' })
+                    .setLngLat([@booking.DropoffLongitude, @booking.DropoffLatitude])
+                    .addTo(map);
+
+                // Set route
+                directions.setOrigin([@booking.PickupLongitude, @booking.PickupLatitude]);
+                directions.setDestination([@booking.DropoffLongitude, @booking.DropoffLatitude]);
+
+                // Fit map to show both markers
+                const bounds = new mapboxgl.LngLatBounds();
+                bounds.extend([@booking.PickupLongitude, @booking.PickupLatitude]);
+                bounds.extend([@booking.DropoffLongitude, @booking.DropoffLatitude]);
+                map.fitBounds(bounds, { padding: 50 });
+            });
+        </text>
+    }
+
     const offcanvasElement = document.getElementById('passavail');
     const pullHandle = document.getElementById('pullHandle');
 

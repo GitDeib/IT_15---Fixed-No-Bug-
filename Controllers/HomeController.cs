@@ -428,17 +428,17 @@ namespace IT15_Project.Controllers
 
             var fareSetting = await _context.FareSettings.FirstOrDefaultAsync();
 
-            var acceptedRide = await _context.Bookings
-                 .Include(b => b.User)
-                 .Include(b => b.RatingsReviews)
-                 .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Accepted);
-
-            var startedRide = await _context.Bookings
+            // Get current active booking if exists (either accepted, started, or completed but unpaid)
+            var activeBooking = await _context.Bookings
                 .Include(b => b.User)
-                .Include(b => b.RatingsReviews)
-                .FirstOrDefaultAsync(b => b.DriverId == userId && b.Status == BookingStatus.Started);
+                .Where(b => b.DriverId == userId &&
+                    (b.Status == BookingStatus.Accepted || 
+                     b.Status == BookingStatus.Started || 
+                     (b.Status == BookingStatus.Completed && b.PaymentStatus == PaymentStatus.Unpaid)))
+                .OrderByDescending(b => b.RequestedAt)
+                .FirstOrDefaultAsync();
 
-            // 🛠️ Filter pending bookings based on the driver's seat type
+            // Filter pending bookings based on the driver's seat type
             var availablePassengers = await _context.Bookings
                 .Include(b => b.User)
                 .Where(b => b.Status == BookingStatus.Pending && b.VehicleSeat == driver.VehicleSeat)
@@ -448,90 +448,129 @@ namespace IT15_Project.Controllers
             {
                 Driver = driver,
                 FareSetting = fareSetting,
-                AcceptedRide = acceptedRide,
-                StartedRide = startedRide,
+                ActiveBooking = activeBooking,
                 AvailablePassengers = availablePassengers,
                 IsAvailable = driver.Status == "Available"
             };
 
+            ViewBag.ActiveBooking = activeBooking;
             return View(model);
         }
 
-       [HttpPost]
-[Authorize(Roles = "Driver")]
-public async Task<IActionResult> AcceptBooking(int bookingId)
-{
-    var userId = _userManager.GetUserId(User);
+        [HttpPost]
+        [Authorize(Roles = "Driver")]
+        public async Task<IActionResult> AcceptBooking(int bookingId)
+        {
+            var userId = _userManager.GetUserId(User);
 
-    var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.UserId == userId);
-    if (driver == null)
-        return NotFound("Driver not found.");
+            var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.UserId == userId);
+            if (driver == null)
+                return NotFound("Driver not found.");
 
-    // ✅ Check if the driver is verified
-    if (driver.Status != "Verified")
-    {
-        TempData["Error"] = "Your account is not verified. You cannot accept bookings.";
-        return RedirectToAction("Driver");
-    }
+            // Check if the driver is verified
+            if (driver.Status != "Verified")
+            {
+                TempData["Error"] = "Your account is not verified. You cannot accept bookings.";
+                return RedirectToAction("Driver");
+            }
 
-    var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
-    if (booking == null)
-        return NotFound("Booking not found.");
+            // Check if driver already has an active booking
+            var hasActiveBooking = await _context.Bookings
+                .AnyAsync(b => b.DriverId == userId && 
+                    (b.Status == BookingStatus.Accepted || 
+                     b.Status == BookingStatus.Started || 
+                     (b.Status == BookingStatus.Completed && b.PaymentStatus == PaymentStatus.Unpaid)));
 
-    booking.Status = BookingStatus.Accepted; // Set to Accepted (1)
-    booking.DriverId = userId;
+            if (hasActiveBooking)
+            {
+                TempData["Error"] = "You already have an active booking. Please complete it first.";
+                return RedirectToAction("Driver");
+            }
 
-    await _context.SaveChangesAsync();
-    return RedirectToAction("Driver");
-}
+            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
+            if (booking == null)
+                return NotFound("Booking not found.");
+
+            if (booking.Status != BookingStatus.Pending)
+            {
+                TempData["Error"] = "This booking is no longer available.";
+                return RedirectToAction("Driver");
+            }
+
+            booking.Status = BookingStatus.Accepted;
+            booking.DriverId = userId;
+/*            booking.AcceptedAt = DateTime.UtcNow;
+*/
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Booking accepted successfully!";
+            return RedirectToAction("Driver");
+        }
 
         [HttpPost]
         [Authorize(Roles = "Driver")]
-        public async Task<IActionResult> CompleteRide(int bookingId)
+        public async Task<IActionResult> StartRide(int bookingId)
         {
-            var booking = await _context.Bookings.FindAsync(bookingId);
+            var userId = _userManager.GetUserId(User);
+            var booking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.DriverId == userId);
+
             if (booking == null)
                 return NotFound();
+
+            if (booking.Status != BookingStatus.Accepted)
+            {
+                TempData["Error"] = "Invalid booking status.";
+                return RedirectToAction("Driver");
+            }
 
             booking.Status = BookingStatus.Started;
             booking.StartedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Ride started successfully!";
             return RedirectToAction("Driver");
         }
 
-
-       /* [HttpPost]
-        [Authorize(Roles = "Driver")]
-        public async Task<IActionResult> CancelRide(int bookingId)
-        {
-            var booking = await _context.Bookings.FindAsync(bookingId);
-            if (booking == null)
-                return NotFound();
-
-            booking.Status = BookingStatus.Cancelled;
-            booking.DriverId = null; // Free the ride
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Driver");
-        }*/
-
         [HttpPost]
         [Authorize(Roles = "Driver")]
-        public async Task<IActionResult> MarkComplete(int bookingId)
+        public async Task<IActionResult> CompleteRide(int bookingId)
         {
-            var booking = await _context.Bookings.FindAsync(bookingId);
+            var userId = _userManager.GetUserId(User);
+            var booking = await _context.Bookings
+                .Include(b => b.FareSetting)
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.DriverId == userId);
+
             if (booking == null)
                 return NotFound();
+
+            if (booking.Status != BookingStatus.Started)
+            {
+                TempData["Error"] = "Invalid booking status.";
+                return RedirectToAction("Driver");
+            }
+
+            // Calculate actual time taken
+            var actualTimeInMinutes = (DateTime.UtcNow - booking.StartedAt.Value).TotalMinutes;
+            booking.ActualTimeInMinutes = actualTimeInMinutes;
+
+            // Calculate final fare
+            var fareSetting = booking.FareSetting;
+            if (fareSetting != null)
+            {
+                // Base fare + (distance * per km rate) + (actual time * per minute rate)
+                var finalFare = fareSetting.BaseFare +
+                               (decimal)(booking.DistanceInKm * (double)fareSetting.PerKilometerRate) +
+                               (decimal)(actualTimeInMinutes * (double)fareSetting.PerMinuteRate);
+
+                booking.FinalFare = Math.Round(finalFare, 2);
+            }
 
             booking.Status = BookingStatus.Completed;
             booking.CompletedAt = DateTime.UtcNow;
+            booking.PaymentStatus = PaymentStatus.Unpaid; // Set initial payment status as unpaid
 
             await _context.SaveChangesAsync();
-
-            // ✅ Set TempData message
-            TempData["RideMessage"] = "Booking completed successfully!";
-
+            TempData["Success"] = "Ride completed! Waiting for passenger payment.";
             return RedirectToAction("Driver");
         }
 

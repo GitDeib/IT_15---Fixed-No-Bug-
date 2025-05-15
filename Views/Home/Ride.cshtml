@@ -249,85 +249,53 @@
                 </div>
             </div>
 
-            
-
             <div class="row mb-4">
                 <div class="col-6">
                     <h6 class="text-muted mb-1"><i class="fas fa-road me-2"></i>Distance</h6>
-                    <div class="fw-medium">@booking.DistanceInKm km</div>
+                    <div class="fw-medium">@booking.DistanceInKm.ToString("0.00") km</div>
                 </div>
                 <div class="col-6">
-                    <h6 class="text-muted mb-1"><i class="fas fa-clock me-2"></i>Est. Time</h6>
-                    <div class="fw-medium">@booking.EstimatedTimeInMinutes mins</div>
+                    <h6 class="text-muted mb-1"><i class="fas fa-clock me-2"></i>Time</h6>
+                    @if (booking.Status == BookingStatus.Completed)
+                    {
+                        <div class="fw-medium">@booking.ActualTimeInMinutes?.ToString("0.0") mins</div>
+                    }
+                    else
+                    {
+                        <div class="fw-medium">@booking.EstimatedTimeInMinutes mins (est.)</div>
+                    }
                 </div>
             </div>
-            <hr />
-            <div class="mb-4 text-center">
-                <h6 class="text-muted mb-1"><i class="fas fa-money-bill me-2"></i>Estimated Fare</h6>
-                <div class="fs-5 fw-semibold text-success">₱@booking.EstimatedFare</div>
-            </div>
 
-            <hr class="my-4" />
-
-            <div class="mb-4">
-                <h6 class="text-muted mb-2"><i class="fas fa-user me-2"></i>Assigned Driver</h6>
-
-                @if (booking.Driver != null)
-                {
-                    <div class="d-flex align-items-center mb-3 p-3 bg-light rounded shadow-sm">
-                        <!-- Driver Photo -->
-                        <img src="~/uploads/profilephotos/@booking.Driver.ProfilePhotoPath"
-                             alt="Driver Profile Photo"
-                             class="rounded-circle me-3 shadow-sm border border-dark"
-                             style="width: 60px; height: 60px; object-fit: cover;" />
-
-
-                        <div>
-                            <!-- Driver's Name -->
-                            <div class="fw-semibold text-dark fs-5">
-                                @booking.Driver.FirstName @booking.Driver.LastName
-                            </div>
-
-                            <!-- Driver's Phone Number -->
-                            <small class="text-muted d-block"><i class="fas fa-phone me-1"></i> @booking.Driver.PhoneNumber</small>
-
-                            <!-- Vehicle Model and Plate Number -->
-                            <div class="d-flex mt-2">
-                                <div class="me-3">
-                                    <span class="text-dark mb-1">Model: </span>@booking.Driver.DriverProfile?.VehicleModel
-                                </div>
-                                <div>
-                                    <span class="text-dark mb-1">Plate No: </span>@booking.Driver.DriverProfile?.PlateNumber
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                }
-                else
-                {
-                    <div class="text-muted">Driver not yet assigned.</div>
-                }
+            <div class="text-center mb-4">
+                <h6 class="text-muted mb-1">
+                    <i class="fas fa-money-bill me-2"></i>
+                    @(booking.Status == BookingStatus.Completed ? "Final Fare" : "Estimated Fare")
+                </h6>
+                <div class="fs-5 fw-semibold text-success">
+                    ₱@(booking.Status == BookingStatus.Completed ? booking.FinalFare?.ToString("0.00") : booking.EstimatedFare.ToString("0.00"))
+                </div>
             </div>
 
             @if (booking.Status == BookingStatus.Pending)
             {
-                <form method="post" asp-controller="Home" asp-action="CancelBooking" class="mb-3">
-                    @Html.AntiForgeryToken()
+                <form asp-action="CancelBooking" method="post" class="mb-2">
                     <input type="hidden" name="bookingId" value="@booking.Id" />
                     <button type="submit" class="btn btn-outline-danger w-100 rounded-pill shadow-sm">
                         <i class="fas fa-times-circle me-2"></i> Cancel Booking
                     </button>
                 </form>
             }
-
-            @if (booking.Status == BookingStatus.Completed && booking.PaymentStatus == PaymentStatus.Unpaid)
+            else if (booking.Status == BookingStatus.Completed && booking.PaymentStatus == PaymentStatus.Unpaid)
             {
-                <form method="post" asp-controller="" asp-action="" class="mb-3">
-                    @Html.AntiForgeryToken()
+                <div class="alert alert-warning rounded-3 shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Please complete the payment to finish your ride.
+                </div>
+                <form asp-action="" method="post" class="mb-2">
                     <input type="hidden" name="bookingId" value="@booking.Id" />
                     <button type="submit" class="btn btn-outline-success w-100 rounded-pill shadow-sm">
-                        <i class="fas fa-money-bill-wave me-2"></i> Pay Now
+                        <i class="fas fa-dollar me-2"></i> Pay
                     </button>
                 </form>
             }
@@ -350,14 +318,8 @@
             <i class="fas fa-spinner fa-spin me-2"></i>
             Please wait for a driver to accept your request.
         </div>
+    }
 }
-
-
-
-
-
-        }
-
 
     </div>
 
@@ -417,3 +379,4 @@
         });
     }
 </script>
+
