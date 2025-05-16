@@ -83,7 +83,7 @@ namespace IT15_Project.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -118,11 +118,35 @@ namespace IT15_Project.Areas.Identity.Pages.Account
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
+
+                    if (lockoutEnd.HasValue)
+                    {
+                        var remaining = lockoutEnd.Value.UtcDateTime - DateTime.UtcNow;
+                        var timeLeft = remaining.TotalMinutes < 1
+                            ? $"{remaining.Seconds} seconds"
+                            : $"{remaining.Minutes} minutes and {remaining.Seconds % 60} seconds";
+
+                        ModelState.AddModelError("", $"Your account is locked. Please try again in {timeLeft}.");
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user != null && await _userManager.GetLockoutEnabledAsync(user))
+                    {
+                        int accessFailedCount = await _userManager.GetAccessFailedCountAsync(user);
+                        int maxAttempts = _userManager.Options.Lockout.MaxFailedAccessAttempts;
+
+                        int remainingAttempts = maxAttempts - accessFailedCount;
+
+                        if (remainingAttempts > 0)
+                        {
+                            ModelState.AddModelError(string.Empty, $"You have {remainingAttempts} more attempt(s) before your account gets locked.");
+                        }
+                    }
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
             }

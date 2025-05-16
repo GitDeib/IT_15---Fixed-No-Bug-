@@ -30,18 +30,26 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 builder.Services.ConfigureApplicationCookie(o => {
-    o.ExpireTimeSpan = TimeSpan.FromDays(5);
+    o.ExpireTimeSpan = TimeSpan.FromDays(1);
     o.SlidingExpiration = true;
 });
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
-       o.TokenLifespan = TimeSpan.FromHours(3));
+       o.TokenLifespan = TimeSpan.FromHours(1));
 
 builder.Services.Configure<AuthMessageSenderOptions>(
     builder.Configuration.GetSection("SendGrid")
 );
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.AllowedForNewUsers = true;
+});
 
 var app = builder.Build();
 

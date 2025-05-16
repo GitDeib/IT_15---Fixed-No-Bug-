@@ -242,3 +242,123 @@
 </script>
 
 <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registerForm");
+    const submitBtn = document.getElementById("registerSubmit");
+    const termsCheckbox = document.getElementById("termsCheckPass");
+
+    const inputs = {
+        firstName: form.querySelector('[name="Input.FirstName"]'),
+        middleName: form.querySelector('[name="Input.MiddleName"]'),
+        lastName: form.querySelector('[name="Input.LastName"]'),
+        phone: form.querySelector('[name="Input.PhoneNumber"]'),
+        address: form.querySelector('[name="Input.Address"]'),
+        email: form.querySelector('[name="Input.Email"]'),
+        password: form.querySelector('[name="Input.Password"]'),
+        confirmPassword: form.querySelector('[name="Input.ConfirmPassword"]')
+    };
+
+    // Track if user has interacted with each field
+    const touched = {};
+
+    Object.entries(inputs).forEach(([key, input]) => {
+        const span = document.createElement("div");
+        span.classList.add("text-danger", "small");
+        span.style.marginTop = "4px";
+        input.parentNode.appendChild(span);
+        input._errorSpan = span;
+
+        touched[key] = false;
+
+        input.addEventListener("input", () => {
+            touched[key] = true;
+            validateForm();
+        });
+    });
+
+    termsCheckbox.addEventListener("change", validateForm);
+
+    function showError(input, message) {
+        input.classList.add("is-invalid");
+        input._errorSpan.textContent = message;
+    }
+
+    function clearError(input) {
+        input.classList.remove("is-invalid");
+        input._errorSpan.textContent = "";
+    }
+
+    function validateName(name) {
+        return /^[A-Za-z\s]+$/.test(name.trim());
+    }
+
+    function validatePhone(phone) {
+        return /^09\d{9}$/.test(phone.trim());
+    }
+
+    function validateEmail(email) {
+        return /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email.trim()); // Razor-safe
+        }
+
+    function validatePassword(pwd) {
+        return pwd.length >= 6;
+    }
+
+    function validateForm() {
+        let isValid = true;
+
+        // Validate only if touched
+        if (touched.firstName && !validateName(inputs.firstName.value)) {
+            showError(inputs.firstName, "First name must only contain letters.");
+            isValid = false;
+        } else {
+            clearError(inputs.firstName);
+        }
+
+        if (touched.lastName && !validateName(inputs.lastName.value)) {
+            showError(inputs.lastName, "Last name must only contain letters.");
+            isValid = false;
+        } else {
+            clearError(inputs.lastName);
+        }
+
+        if (touched.phone && !validatePhone(inputs.phone.value)) {
+            showError(inputs.phone, "Phone number must start with 09 and have 11 digits.");
+            isValid = false;
+        } else {
+            clearError(inputs.phone);
+        }
+
+        if (touched.address && inputs.address.value.trim() === "") {
+            showError(inputs.address, "Address is required.");
+            isValid = false;
+        } else {
+            clearError(inputs.address);
+        }
+
+        if (touched.email && !validateEmail(inputs.email.value)) {
+            showError(inputs.email, "Enter a valid email address.");
+            isValid = false;
+        } else {
+            clearError(inputs.email);
+        }
+
+        if (touched.password && !validatePassword(inputs.password.value)) {
+            showError(inputs.password, "Password must be at least 6 characters.");
+            isValid = false;
+        } else {
+            clearError(inputs.password);
+        }
+
+        if (touched.confirmPassword && inputs.confirmPassword.value !== inputs.password.value) {
+            showError(inputs.confirmPassword, "Passwords do not match.");
+            isValid = false;
+        } else {
+            clearError(inputs.confirmPassword);
+        }
+
+    }
+});
+</script>
