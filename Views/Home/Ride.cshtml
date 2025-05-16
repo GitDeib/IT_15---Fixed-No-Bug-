@@ -38,6 +38,12 @@
             {
                 <div class="alert alert-success" role="alert">@TempData["Success"]</div>
             }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
 
             <h1 class="text-center fs-4 mb-3">Set Destination</h1>
 
@@ -292,7 +298,7 @@
                     <i class="fas fa-exclamation-circle me-2"></i>
                     Please complete the payment to finish your ride.
                 </div>
-                <form asp-action="" method="post" class="mb-2">
+                <form asp-controller="Home" asp-action="ConfirmPayment" method="post" class="mb-2">
                     <input type="hidden" name="bookingId" value="@booking.Id" />
                     <button type="submit" class="btn btn-outline-success w-100 rounded-pill shadow-sm">
                         <i class="fas fa-dollar me-2"></i> Pay

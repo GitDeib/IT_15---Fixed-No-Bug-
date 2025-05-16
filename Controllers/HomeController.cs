@@ -177,6 +177,25 @@ namespace IT15_Project.Controllers
             return RedirectToAction("Ride");
         }
 
+        // Payment
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPayment(int bookingId)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+
+            if (booking == null)
+                return NotFound();
+
+            booking.PaymentStatus = PaymentStatus.Paid;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Payment confirmed successfully.";
+
+            return RedirectToAction("Ride", new { id = bookingId });
+        }
+
+
 
         [Authorize(Roles = "Passenger")]
         public IActionResult RideMotor() => View();
