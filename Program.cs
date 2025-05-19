@@ -106,7 +106,7 @@ static async Task SeedAdminAsync(WebApplication app)
         }
 
         string adminRole = "Admin";
-        string adminEmail = "j.bugas.534179@umindanao.edu.ph";
+        string adminEmail = "e.deono.537918@umindanao.edu.ph";
 
         // Skip role creation if role already exists
         var existingAdmin = await userManager.FindByEmailAsync(adminEmail);

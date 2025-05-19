@@ -1,7 +1,9 @@
 ﻿@page
 @model IT15_Project.Areas.Identity.Pages.Account.DriverRegModel
 
-<div class="container-fluid py-5 animate-fade-in-up delay-1 bg-image">
+<div class="container-fluid py-5 animate-fade-in-up delay-1 ">
+    <spline-viewer loading-anim-type="spinner-big-dark" url="https://prod.spline.design/h2gZA2ogowIh-c7m/scene.splinecode" class="spline-body-bg"></spline-viewer>
+
     <div class="row align-items-center justify-content-center">
         <div class="col-lg-8 animate-fade-in">
             <form asp-page-handler="RegisterDriver" method="post" enctype="multipart/form-data" class="border p-4 shadow-sm rounded bg-white">
@@ -326,3 +328,4 @@
 </script>
 
 
+<script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.86/build/spline-viewer.js"></script>
