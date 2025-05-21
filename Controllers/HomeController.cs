@@ -218,9 +218,74 @@ namespace IT15_Project.Controllers
             var pendingDriversCount = _context.Drivers.Count(d => d.Status == "Not Verified");
             var approvedDriversCount = _context.Drivers.Count(d => d.Status == "Verified");
 
+            // Calculate today's income from commission
+            var today = DateTime.UtcNow.Date;
+            var todayIncome = _context.Bookings
+                .Include(b => b.FareSetting)
+                .Where(b => b.Status == BookingStatus.Completed && 
+                           b.PaymentStatus == PaymentStatus.Paid &&
+                           b.CompletedAt.Value.Date == today)
+                .Sum(b => (b.FinalFare ?? 0) * (b.FareSetting.CommissionRate / 100.0m));
+
+            // Calculate average monthly rides
+            var currentDate = DateTime.UtcNow;
+            var startOfYear = new DateTime(currentDate.Year, 1, 1);
+            var endOfYear = new DateTime(currentDate.Year, 12, 31);
+
+            var monthlyRides = _context.Bookings
+                .Where(b => b.RequestedAt >= startOfYear && b.RequestedAt <= endOfYear)
+                .GroupBy(b => new { b.RequestedAt.Year, b.RequestedAt.Month })
+                .Select(g => g.Count())
+                .ToList();
+
+            var averageMonthlyRides = monthlyRides.Any() 
+                ? Math.Round(monthlyRides.Average(), 1) 
+                : 0;
+
+            // Get current month's bookings for chart
+            var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+
+            // Get all bookings for the current month
+            var monthlyBookings = _context.Bookings
+                .Where(b => b.RequestedAt >= startOfMonth && b.RequestedAt <= endOfMonth)
+                .ToList();
+
+            // Group bookings by day and status
+            var bookingsByDay = monthlyBookings
+                .GroupBy(b => b.RequestedAt.Day)
+                .OrderBy(g => g.Key)
+                .ToDictionary(
+                    g => g.Key,
+                    g => new
+                    {
+                        TotalRides = g.Count(),
+                        CancelledRides = g.Count(b => b.Status == BookingStatus.Cancelled)
+                    }
+                );
+
+            // Create arrays for the chart data
+            var daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+            var monthlyRideData = new int[daysInMonth];
+            var cancelledRideData = new int[daysInMonth];
+
+            for (int i = 0; i < daysInMonth; i++)
+            {
+                if (bookingsByDay.TryGetValue(i + 1, out var data))
+                {
+                    monthlyRideData[i] = data.TotalRides;
+                    cancelledRideData[i] = data.CancelledRides;
+                }
+            }
 
             ViewBag.PendingDriversCount = pendingDriversCount;
             ViewBag.approvedDriversCount = approvedDriversCount;
+            ViewBag.MonthlyRideData = monthlyRideData;
+            ViewBag.CancelledRideData = cancelledRideData;
+            ViewBag.CurrentMonth = currentDate.ToString("MMMM yyyy");
+            ViewBag.TodayIncome = todayIncome.ToString("N2");
+            ViewBag.AverageMonthlyRides = averageMonthlyRides;
+
             return View();
         }
 
@@ -593,7 +658,47 @@ namespace IT15_Project.Controllers
             return RedirectToAction("Driver");
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetMonthlyRideData(int year, int month)
+        {
+            var startOfMonth = new DateTime(year, month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
 
+            // Get all bookings for the selected month
+            var monthlyBookings = await _context.Bookings
+                .Where(b => b.RequestedAt >= startOfMonth && b.RequestedAt <= endOfMonth)
+                .ToListAsync();
+
+            // Group bookings by day and status
+            var bookingsByDay = monthlyBookings
+                .GroupBy(b => b.RequestedAt.Day)
+                .OrderBy(g => g.Key)
+                .ToDictionary(
+                    g => g.Key,
+                    g => new
+                    {
+                        TotalRides = g.Count(),
+                        CancelledRides = g.Count(b => b.Status == BookingStatus.Cancelled)
+                    }
+                );
+
+            // Create arrays for the chart data
+            var daysInMonth = DateTime.DaysInMonth(year, month);
+            var monthlyRideData = new int[daysInMonth];
+            var cancelledRideData = new int[daysInMonth];
+
+            for (int i = 0; i < daysInMonth; i++)
+            {
+                if (bookingsByDay.TryGetValue(i + 1, out var data))
+                {
+                    monthlyRideData[i] = data.TotalRides;
+                    cancelledRideData[i] = data.CancelledRides;
+                }
+            }
+
+            return Json(new { monthlyRides = monthlyRideData, cancelledRides = cancelledRideData });
+        }
 
     }
 

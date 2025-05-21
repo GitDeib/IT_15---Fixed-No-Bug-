@@ -24,17 +24,17 @@
             <h5 class="card-title">Today's Income</h5>
             <div class="d-flex align-items-center justify-content-start">
                 <img src="~/lib/GIF/profit.gif" alt="KM" style="width: 50px; height: 50px;">
-                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱ 560.00</p>
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">₱ @ViewBag.TodayIncome</p>
             </div>
         </div>
     </div>
 
     <div class="col-12 col-md-3 mb-3">
         <div class="card text-black bg-white glass-panel h-100 p-3 d-flex flex-column justify-content-between">
-            <h5 class="card-title">Pending Payouts to Drivers</h5>
+            <h5 class="card-title">Average Monthly Ride</h5>
             <div class="d-flex align-items-center justify-content-start">
-                <img src="~/lib/GIF/alms.gif" alt="KM" style="width: 50px; height: 50px;">
-                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">15</p>
+                <img src="~/lib/GIF/wheel.gif" alt="KM" style="width: 50px; height: 50px;">
+                <p class="fs-3 mb-0 me-2" style="font-family: 'Quicksand', sans-serif; font-weight: 700;">@ViewBag.AverageMonthlyRides</p>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
 <div class="container-fluid mt-2">
     <div class="row">
         <!-- Graph: Wider column -->
-        <div class="col-lg-8 mb-4">
+        <div class="col-lg-12 mb-4">
             <!-- Title and Filter on same level -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h4 class="mb-0">Total Rides (This Month)</h4>
@@ -70,13 +70,13 @@
             <!-- Chart card -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <canvas id="ridesChart" height="100"></canvas>
+                    <canvas id="ridesChart" height="75"></canvas>
                 </div>
             </div>
         </div>
 
 
-        <!-- Review Table: Narrower column -->
+        @* <!-- Review Table: Narrower column -->
         <div class="col-lg-4 mb-4">
             <h4 class="mb-3">Review & Rating History</h4>
 
@@ -130,7 +130,7 @@
                         <!-- Add more rows as needed -->
                     </tbody>
                 </table>
-            </div>
+            </div> *@
 
 
         </div>
@@ -145,24 +145,15 @@
 <script>
     const ctx = document.getElementById('ridesChart').getContext('2d');
 
-    // Labels: Day 1 to 30
-    const dayLabels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
+    // Get data from ViewBag
+    const monthlyRideData = @Html.Raw(Json.Serialize(ViewBag.MonthlyRideData));
+    const cancelledRideData = @Html.Raw(Json.Serialize(ViewBag.CancelledRideData));
+    const currentMonth = '@ViewBag.CurrentMonth';
 
-    // Line: Data for each day of the month
-    const monthlyRideData = [
-        12, 18, 20, 25, 30, 22, 27, 35, 45, 42,
-        38, 40, 50, 48, 43, 39, 41, 46, 52, 57,
-        60, 61, 64, 66, 68, 69, 70, 71, 72, 74
-    ]; // Replace with real data
+    // Create labels based on the number of days in the data
+    const dayLabels = Array.from({ length: monthlyRideData.length }, (_, i) => `Day ${i + 1}`);
 
-    // Data for cancelled rides
-    const cancelledRideData = [
-        2, 4, 1, 3, 0, 5, 2, 4, 3, 1,
-        2, 3, 4, 1, 0, 2, 5, 3, 4, 2,
-        1, 2, 3, 5, 2, 4, 3, 1, 2, 3
-    ]; // Replace with real data for cancelled rides
-
-    new Chart(ctx, {
+    let chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: dayLabels,
@@ -192,6 +183,10 @@
             plugins: {
                 legend: {
                     position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: `Ride Statistics - ${currentMonth}`
                 }
             },
             scales: {
@@ -205,13 +200,35 @@
             }
         }
     });
+
+    // Handle month filter change
+    document.getElementById('monthFilter').addEventListener('change', async function(e) {
+        const selectedDate = new Date(e.target.value);
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth() + 1;
+
+        try {
+            const response = await fetch(`/Home/GetMonthlyRideData?year=${year}&month=${month}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const data = await response.json();
+            
+            // Update chart data
+            chart.data.datasets[0].data = data.monthlyRides;
+            chart.data.datasets[1].data = data.cancelledRides;
+            chart.options.plugins.title.text = `Ride Statistics - ${selectedDate.toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+            chart.update();
+        } catch (error) {
+            console.error('Error fetching monthly data:', error);
+        }
+    });
 </script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Get current month and pad it
+        const month = String(today.getMonth() + 1).padStart(2, '0');
         const currentMonth = `${year}-${month}`;
         document.getElementById("monthFilter").value = currentMonth;
     });
